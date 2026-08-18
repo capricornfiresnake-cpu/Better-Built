@@ -96,7 +96,7 @@ export default function ProjectCard({
             <ExternalArrow />
           </>
         ) : (
-          <>View case study →</>
+          <>See The Details →</>
         )}
       </span>
     </div>
@@ -117,7 +117,7 @@ export default function ProjectCard({
       ) : (
         <Link
           href={caseStudyHref}
-          aria-label={`${project.name} — ${project.category}. View the case study.`}
+          aria-label={`${project.name} — ${project.category}. See The Details.`}
           className="block focus-visible:outline-offset-4"
         >
           {cover}
@@ -141,7 +141,7 @@ export default function ProjectCard({
             />
             {isLive ? (
               <Link href={caseStudyHref} className="link-underline label-mono text-ink-900/60">
-                Case study →
+                See The Details →
               </Link>
             ) : null}
           </div>

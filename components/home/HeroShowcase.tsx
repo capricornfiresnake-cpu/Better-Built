@@ -25,6 +25,12 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
     if (paused) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    // Pausing is driven by hover, which touch devices never fire. Rotating
+    // content under someone's thumb with no way to stop it reads as a glitch,
+    // so there the selector below is the only way to change project — the
+    // viewer drives it, not a timer.
+    if (!window.matchMedia("(hover: hover)").matches) return;
+
     const id = window.setInterval(
       () => setActive((i) => (i + 1) % projects.length),
       CYCLE_MS,
@@ -67,30 +73,38 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
     >
       {/* Desktop frame — all previews stay mounted and cross-fade. */}
       <div className="relative">
-        <BrowserFrame label={current.domain} className="w-full">
-          <div
-            className="relative overflow-hidden"
-            style={{ aspectRatio: `${PREVIEW_DESKTOP.width} / ${PREVIEW_DESKTOP.height}` }}
-          >
-            {projects.map((project, i) => (
-              <div
-                key={project.slug}
-                aria-hidden={i !== active}
-                className={cn(
-                  "absolute inset-0 transition-opacity duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
-                  i === active ? "opacity-100" : "opacity-0",
-                )}
-              >
-                <ProjectPreview
-                  project={project}
-                  device="desktop"
-                  priority={i === 0}
-                  sizes="(max-width: 1024px) 100vw, 55vw"
-                />
-              </div>
-            ))}
-          </div>
-        </BrowserFrame>
+        <Link
+          href={`/work/${current.slug}`}
+          aria-label={`${current.name} — ${current.category}. See The Details.`}
+          className="block focus-visible:outline-offset-4"
+        >
+          <BrowserFrame label={current.domain} className="w-full">
+            <div
+              className="relative overflow-hidden"
+              style={{
+                aspectRatio: `${PREVIEW_DESKTOP.width} / ${PREVIEW_DESKTOP.height}`,
+              }}
+            >
+              {projects.map((project, i) => (
+                <div
+                  key={project.slug}
+                  aria-hidden={i !== active}
+                  className={cn(
+                    "absolute inset-0 transition-opacity duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+                    i === active ? "opacity-100" : "opacity-0",
+                  )}
+                >
+                  <ProjectPreview
+                    project={project}
+                    device="desktop"
+                    priority={i === 0}
+                    sizes="(max-width: 1024px) 100vw, 55vw"
+                  />
+                </div>
+              ))}
+            </div>
+          </BrowserFrame>
+        </Link>
 
         {/* Phone, hung off the lower-left corner of the desktop frame. Hidden on
             phones, where it would cover a quarter of an already-small preview —
@@ -102,7 +116,9 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
           <PhoneFrame notch={!current.cover}>
             <div
               className="relative overflow-hidden"
-              style={{ aspectRatio: `${PREVIEW_MOBILE.width} / ${PREVIEW_MOBILE.height}` }}
+              style={{
+                aspectRatio: `${PREVIEW_MOBILE.width} / ${PREVIEW_MOBILE.height}`,
+              }}
             >
               {projects.map((project, i) => (
                 <div
@@ -113,7 +129,11 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
                     i === active ? "opacity-100" : "opacity-0",
                   )}
                 >
-                  <ProjectPreview project={project} device="mobile" sizes="180px" />
+                  <ProjectPreview
+                    project={project}
+                    device="mobile"
+                    sizes="180px"
+                  />
                 </div>
               ))}
             </div>
@@ -123,10 +143,17 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
 
       {/* Caption + selector. The spacer keeps the caption clear of the phone. */}
       <div className="mt-10 flex flex-wrap items-end justify-between gap-x-6 gap-y-5 sm:mt-20">
-        <span aria-hidden="true" className="hidden w-[20%] max-w-[118px] shrink-0 sm:block" />
+        <span
+          aria-hidden="true"
+          className="hidden w-[20%] max-w-[118px] shrink-0 sm:block"
+        />
         <div aria-live="polite" className="min-w-0 flex-1">
           <p className="label-mono text-ink-900/60">
-            <span className={current.status === "client" ? "text-brass-deep" : undefined}>
+            <span
+              className={
+                current.status === "client" ? "text-brass-deep" : undefined
+              }
+            >
               {current.status === "client" ? "Client" : "Concept"}
             </span>{" "}
             · {current.industry}
@@ -147,7 +174,7 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
               onClick={() => setActive(i)}
               aria-label={`Show ${project.name}`}
               aria-pressed={i === active}
-              className="group/dot py-2"
+              className="group/dot flex min-h-11 items-center py-2"
             >
               <span
                 className={cn(
