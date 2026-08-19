@@ -9,8 +9,8 @@ export const site = {
   tagline: "Better Websites. Better Business.",
   description:
     "Better Built designs and builds modern, fast, mobile-first websites for businesses in any industry — built to look credible and bring in customers.",
-  /** Update this to the production domain before deploying. */
-  url: "https://betterbuilt.com",
+  /** Update this when a custom domain replaces the Vercel one. */
+  url: "https://better-built.vercel.app",
   email: "hello@betterbuilt.com",
   phone: "",
   locale: "en_US",
