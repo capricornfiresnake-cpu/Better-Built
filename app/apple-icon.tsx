@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-/** Home-screen icon for iOS. Same registration mark as the wordmark. */
+/** Home-screen icon for iOS. The same placed-module mark as the wordmark. */
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
@@ -14,20 +14,20 @@ export default function AppleIcon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#0b0c0f",
+          backgroundColor: "#08090b",
         }}
       >
         <div
           style={{
-            width: 118,
-            height: 118,
-            border: "15px solid #c9a468",
+            width: 112,
+            height: 112,
+            border: "8px solid rgba(108,99,255,0.55)",
             display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            alignItems: "flex-end",
+            justifyContent: "flex-end",
           }}
         >
-          <div style={{ width: 46, height: 46, backgroundColor: "#c9a468" }} />
+          <div style={{ width: 52, height: 52, backgroundColor: "#6c63ff" }} />
         </div>
       </div>
     ),

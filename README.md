@@ -4,7 +4,8 @@ Marketing site for Better Built — a web design studio.
 **Better Websites. Better Business.**
 
 Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4. No animation
-library and no UI kit. The only images are screenshots of live client sites.
+library, no UI kit, no icon package — every SVG is drawn inline. The only
+raster images are screenshots of live client sites.
 
 ---
 
@@ -44,18 +45,23 @@ There are no environment variables to set.
 ```
 app/                 Routes, metadata, sitemap, robots, OG image, lead API
 components/
-  layout/            Header, mobile menu, footer, wordmark, page header
-  ui/                Button, Section, Container, Eyebrow, CropMarks, Reveal
+  layout/            Header, mobile menu, footer, wordmark, page header,
+                     page transition, prose
+  ui/                Button, Section/Container/Eyebrow/Ticks/TechMeta,
+                     Reveal, AnimatedText, Sheen, useInView
+  visuals/           DigitalGrid + Glow, BuildAnimation, MotionBackground
   mockups/           Browser and phone chrome, preview scaler
-  previews/          The miniature websites (one file per project)
-  work/              Project card, cover renderer
+  previews/          The miniature websites (one file per concept project)
+  work/              Project showcase, cover renderer, status tag
+  services/          The six service diagrams
   forms/             Contact form
   home/              Hero showcase, process timeline
-sections/            Composable page sections (Hero, Pricing, Process, …)
+sections/            Composable page sections (Hero, SelectedWork, Pricing, …)
 data/                Projects, services, process, pricing, FAQ copy
 lib/                 Site config, SEO helpers, utilities
 scripts/             capture-covers.mjs — screenshots live client sites
 public/work/         Generated cover screenshots (committed)
+public/visuals/      Drop zone for generated motion assets (empty by default)
 ```
 
 ### Editing content
@@ -70,6 +76,93 @@ Almost everything a non-developer would want to change lives in `data/` and
 | Services and process steps | `data/services.ts` |
 | Prices, plans, form options | `data/pricing.ts` |
 | FAQ | `data/services.ts` |
+
+---
+
+## Design system
+
+The site is set up as a **drawing set**: a dark ground, warm chalk type,
+hairline rules, and a single violet accent that belongs entirely to the
+technical layer — grid lines, registration ticks, indices and active states are
+all the same colour, so the "blueprint" and the "accent" are one system rather
+than two decorations.
+
+Tokens are defined once in `app/globals.css` under `@theme`.
+
+**Colour**
+
+| Token | Value | Use |
+| --- | --- | --- |
+| `void` | `#08090B` | page ground |
+| `deck` | `#101216` | alternating section surface |
+| `card` | `#15171C` | cards, frames |
+| `line-soft` / `line` / `line-hard` | white at 5.5% / 10% / 20% | hairlines only |
+| `chalk` | `#F2F0EA` | primary text |
+| `slate` | `#9A9CA3` | secondary text |
+| `dim` | `#85888F` | meta and labels |
+| `figure` | `#6B6E77` | ghosted indices (large text only) |
+| `accent` | `#6C63FF` | the technical layer |
+| `accent-lift` | `#8B84FF` | accent at small text sizes |
+
+Every one of these clears WCAG AA against every surface it is used on. The
+accent is allowed to *glow* in exactly two places on the whole site: behind the
+hero frame and behind the footer statement.
+
+**Type**
+
+One display family, used across two extreme widths — the system is that *the
+larger the setting, the narrower the cut*, the way a real drawing title block
+narrows as it scales up.
+
+- **Archivo** (variable, `wdth` axis) — display. `wdth 76` at hero scale,
+  widening to `100` at interface scale.
+- **Instrument Sans** — body and UI.
+- **Azeret Mono** — the technical layer: indices, statuses, dimensions, labels.
+- **Newsreader** — reserved for portfolio previews with an editorial brand.
+  Not part of the site's own voice.
+
+Scale utilities: `display-mega`, `display-xl`, `display-lg`, `display-md`,
+`display-sm`, `numeral`, `label-mono`, `label-mono-sm`, `lede`.
+
+**Structural devices**
+
+- `.sheet` draws the two vertical margin rules of a drawing sheet down a
+  section. Suppressed below 640px where the gutter can't spare the pixels.
+- `.ticks` adds registration marks at a module's corners.
+- `DigitalGrid` is the masked blueprint field; `Glow` is the accent pool.
+
+Numbering is only used where the content is genuinely sequential — the process
+steps, the hero build ladder, the portfolio index. The six services are a *set*,
+not a sequence, so they carry two-letter drawing references (`DS`, `MB`, `CV`,
+`SE`, `LN`, `UP`) instead of being numbered `01–06`.
+
+---
+
+## Motion
+
+No animation library. Everything is CSS transitions and keyframes, driven by one
+shared `useInView` hook (`components/ui/useInView.ts`) so there is a single
+IntersectionObserver implementation to reason about.
+
+| Piece | What it does |
+| --- | --- |
+| `BuildAnimation` | **The signature.** A browser frame that constructs itself — drafting grid draws in, interface components snap into place with their labels, the wireframe dissolves into the real client site. ~1.9s, once. |
+| `Reveal` | Scroll reveals in four modes: `fade`, `clip`, `settle` (96% → 100%, used on the previews), `rule` (a hairline drawing itself). |
+| `AnimatedText` | Per-line masked headline reveal. Lines are authored explicitly because at display size the break is a composition decision. |
+| `ProcessTimeline` | A rail that fills with scroll; each stage reports queued / active / complete. |
+| `Sheen` | The only cursor effect on the site: a pool of accent light following the pointer across a preview. rAF-throttled, writes two CSS custom properties. |
+| `PageTransition` | A 500ms rise-and-settle on the incoming route, keyed on pathname. No overlay, no loading state. |
+
+`prefers-reduced-motion: reduce` switches all of it off in CSS — the design is
+unchanged, only the movement stops. Nothing branches on it in JavaScript except
+the three effects that would otherwise keep running a timer or a scroll handler.
+
+### Generated visual assets
+
+`components/visuals/MotionBackground.tsx` is the drop-in point for a generated
+video or still, already placed in the hero. It renders nothing without a `src`,
+lazy-loads on approach, skips the download entirely under reduced motion or
+Save-Data, and falls back to its poster. See `public/visuals/README.md`.
 
 ---
 
@@ -97,10 +190,14 @@ no stock photo ever stands in for a business that does not exist.
 
 Both kinds land on the same aspect ratio, so they sit together in one grid.
 
+> The `.preview-scaler` / `.preview-canvas` rules in `globals.css` are load
+> bearing. They clip the preview *and* stop a 1400px-wide miniature from setting
+> the min-content width of the grid item it lives in.
+
 Live client work: **Wavelink Surf** (wavelinksurf.com) and
 **The Shanty** (theshantylounge.com). Their covers, the big preview on their
-case studies, and their domain in the meta row all link straight to the live
-site in a new tab; the project name and "Case study →" go to the case study.
+project pages, and their domain in the meta row all link straight to the live
+site in a new tab; the project name and "See project →" go to the project page.
 
 ### Adding a real client project
 
@@ -114,9 +211,10 @@ build `components/previews/<slug>.tsx` exporting `Desktop` and `Mobile`, registe
 the slug in `components/previews/registry.ts`, and omit `cover`.
 
 **Honesty rules baked into the site.** Client work carries `status: "client"`
-and a brass **Client** tag; everything else is labelled **Concept** and is
+and a violet **Client** tag; everything else is labelled **Concept** and is
 Better Built's own design study with a fictional business. That distinction is
-stated on every card and in the Status column of every case study.
+stated on every showcase, in the Status column of every project page, and in a
+note at the foot of `/work`.
 
 The site publishes **no testimonials or social proof at all** — no reviews, no
 logo wall, no statistics, no years-in-business claims. That is deliberate while
@@ -134,23 +232,20 @@ insert, or webhook. No component changes are needed.
 
 ---
 
-## Design system
+## Standards the site is held to
 
-Tokens are defined once in `app/globals.css` under `@theme`.
+Verified in-browser after the redesign, across `/`, `/work`, `/services`,
+`/process`, `/pricing`, `/about`, `/contact` and the project pages:
 
-- **Ink** `#0b0c0f` · **Paper** `#f7f7f5` · **Fog** neutral grays
-- **Brass** `#c9a468` on dark, `#7a5c24` on light — the only accent, used sparingly
-- **Archivo** (variable width axis) for display, **Instrument Sans** for body,
-  **Azeret Mono** for labels, **Newsreader** inside previews that need an
-  editorial voice
-- Crop marks (`CropMarks`) are the recurring structural motif
-
-### Standards the site is held to
-
-- One `<h1>` per page; previews are exposed as labelled `role="img"` regions
-  rather than polluting the document outline
-- All text meets WCAG AA contrast (verified across every page)
-- No horizontal overflow from 320px to 1920px
-- Keyboard navigable with visible focus; the mobile menu traps focus and
-  restores it on close
-- `prefers-reduced-motion` disables every animation
+- **No horizontal overflow** from 375px to 1920px (checked at 375, 430, 768,
+  1024, 1440, 1920).
+- **WCAG AA contrast on every text node** — zero failures, measured against the
+  actual composited background rather than assumed.
+- One `<h1>` per page and no skipped heading levels; previews are exposed as
+  labelled `role="img"` regions rather than polluting the document outline.
+- Keyboard navigable with visible focus; the mobile menu traps focus, locks
+  body scroll, closes on Escape, and restores focus on close.
+- Every link and button carries an accessible name; external links declare
+  `rel="noreferrer"` and announce that they open in a new tab.
+- `prefers-reduced-motion` disables every animation.
+- No animation or UI dependency: the whole redesign added **zero** packages.

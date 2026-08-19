@@ -1,7 +1,6 @@
 import PageHeader from "@/components/layout/PageHeader";
 import Reveal from "@/components/ui/Reveal";
-import { Container, CropMarks, Eyebrow, Section } from "@/components/ui/Section";
-import CtaBand from "@/sections/CtaBand";
+import { Container, Eyebrow, Section, Ticks } from "@/components/ui/Section";
 import Process from "@/sections/Process";
 import Faq from "@/sections/Faq";
 import { pageMeta } from "@/lib/seo";
@@ -48,17 +47,22 @@ export default function ProcessPage() {
     <>
       <PageHeader
         eyebrow="Process"
-        title="From first call to live site."
+        lines={["Process"]}
         lede="Most business websites launch two to three weeks after the first conversation. Here's exactly what happens in between."
+        meta={[
+          { label: "Stages", value: "04" },
+          { label: "Typical duration", value: "2–3 weeks" },
+          { label: "Contract", value: "None" },
+        ]}
       />
 
       <Process withCta={false} />
 
-      <Section surface="paper">
+      <Section surface="deck" rule>
         <Container>
           <Reveal>
             <Eyebrow>What to expect</Eyebrow>
-            <h2 className="display-xl mt-6 max-w-[16ch]">
+            <h2 className="display-xl mt-7 max-w-[15ch] text-chalk">
               No mystery, no long forms.
             </h2>
           </Reveal>
@@ -66,36 +70,32 @@ export default function ProcessPage() {
           <div className="mt-[clamp(2.5rem,5vw,4rem)] grid gap-8 md:grid-cols-3">
             {expectations.map((group, i) => (
               <Reveal key={group.title} delay={i * 80}>
-                <CropMarks className="h-full text-ink-900">
-                  <div className="h-full p-6">
-                    <h3 className="display-md">{group.title}</h3>
-                    <ul className="mt-6 space-y-3 text-[0.9375rem] text-ink-900/65">
+                <Ticks className="group h-full">
+                  <div className="h-full rounded-lg border border-line bg-card p-6 transition-colors duration-500 hover:border-line-hard">
+                    <h3 className="display-md text-chalk">{group.title}</h3>
+                    <ul className="mt-6 border-t border-line-soft">
                       {group.items.map((item) => (
-                        <li key={item} className="flex gap-3 border-b border-ink-900/10 pb-3">
+                        <li
+                          key={item}
+                          className="flex gap-3 border-b border-line-soft py-3 text-[0.9375rem] text-slate"
+                        >
                           <span
                             aria-hidden="true"
-                            className="mt-[0.62em] h-px w-3 shrink-0 bg-brass-deep"
+                            className="mt-[0.62em] h-px w-3 shrink-0 bg-accent"
                           />
                           {item}
                         </li>
                       ))}
                     </ul>
                   </div>
-                </CropMarks>
+                </Ticks>
               </Reveal>
             ))}
           </div>
         </Container>
       </Section>
 
-      <Faq surface="paper-dim" />
-
-      <CtaBand
-        eyebrow="Step one"
-        title="Tell us about your business."
-        body="It starts with a short conversation. No commitment, no sales script."
-        cta={{ label: "Start My Project", href: "/contact" }}
-      />
+      <Faq surface="void" />
     </>
   );
 }

@@ -6,10 +6,14 @@ import { processSteps } from "@/data/services";
 import { cn } from "@/lib/utils";
 
 /**
- * Four steps with a rail that draws as the section passes the viewport.
- * The numbering is real information here — the steps happen in this order.
+ * The build timeline.
+ *
+ * A rail fills as the section passes the viewport and each stage reports its
+ * own state — queued, active, complete — the way a build pipeline would. The
+ * numbering is real information here: these steps happen in this order, and
+ * the status of one depends on the one before it.
  */
-export default function ProcessTimeline() {
+export default function ProcessTimeline({ tone = "void" }: { tone?: "void" | "deck" }) {
   const containerRef = useRef<HTMLOListElement>(null);
   const [progress, setProgress] = useState(0);
 
@@ -28,7 +32,7 @@ export default function ProcessTimeline() {
     const update = () => {
       frame = 0;
       const rect = node.getBoundingClientRect();
-      const anchor = window.innerHeight * 0.62;
+      const anchor = window.innerHeight * 0.6;
       const raw = (anchor - rect.top) / rect.height;
       setProgress(Math.max(0, Math.min(1, raw)));
     };
@@ -47,62 +51,99 @@ export default function ProcessTimeline() {
     };
   }, []);
 
+  const total = processSteps.length;
+
   return (
-    <ol ref={containerRef} className="relative mt-[clamp(3rem,6vw,4.5rem)]">
-      {/* Rail */}
-      <span
-        aria-hidden="true"
-        className="absolute left-0 top-0 hidden h-full w-px bg-paper/15 sm:block"
-      />
-      <span
-        aria-hidden="true"
-        className="absolute left-0 top-0 hidden w-px origin-top bg-brass transition-[height] duration-300 ease-linear sm:block"
-        style={{ height: `${progress * 100}%` }}
-      />
+    <div className="mt-[clamp(2.5rem,5vw,4rem)]">
+      <div className="flex items-center gap-4 border-b border-line pb-4">
+        <span className="label-mono-sm text-dim">Build progress</span>
+        <span aria-hidden="true" className="relative h-px flex-1 bg-line">
+          <span
+            className="absolute inset-y-0 left-0 bg-accent transition-[width] duration-300 ease-linear"
+            style={{ width: `${Math.round(progress * 100)}%` }}
+          />
+        </span>
+        <span className="label-mono-sm w-10 text-right text-accent-lift tabular-nums">
+          {Math.round(progress * 100)}%
+        </span>
+      </div>
 
-      {processSteps.map((step, i) => {
-        const active = progress >= (i + 0.35) / processSteps.length;
+      <ol ref={containerRef} className="relative">
+        {/* Rail */}
+        <span
+          aria-hidden="true"
+          className="absolute left-0 top-0 hidden h-full w-px bg-line sm:block"
+        />
+        <span
+          aria-hidden="true"
+          className="absolute left-0 top-0 hidden w-px origin-top bg-accent transition-[height] duration-300 ease-linear sm:block"
+          style={{ height: `${progress * 100}%` }}
+        />
 
-        return (
-          <li
-            key={step.number}
-            className="relative grid gap-y-4 border-b border-paper/10 py-[clamp(2rem,4vw,3rem)] last:border-b-0 sm:grid-cols-[3rem_minmax(0,1fr)] sm:gap-x-6 sm:pl-8 lg:grid-cols-[7rem_minmax(0,22rem)_minmax(0,1fr)] lg:gap-x-10"
-          >
-            <span
-              aria-hidden="true"
+        {processSteps.map((step, i) => {
+          const reached = progress >= (i + 0.35) / total;
+          const passed = progress >= (i + 1.15) / total;
+          const status = passed ? "Complete" : reached ? "Active" : "Queued";
+
+          return (
+            <li
+              key={step.number}
               className={cn(
-                "absolute -left-[3px] top-[calc(clamp(2rem,4vw,3rem)+0.55rem)] hidden h-[7px] w-[7px] transition-colors duration-500 sm:block",
-                active ? "bg-brass" : "bg-paper/25",
-              )}
-            />
-
-            <span
-              className={cn(
-                "label-mono pt-1.5 transition-colors duration-500",
-                active ? "text-brass" : "text-paper/55",
-              )}
-            >
-              {step.number}
-            </span>
-
-            <h3
-              className={cn(
-                "display-md transition-colors duration-500 lg:col-start-2",
-                active ? "text-paper" : "text-paper/55",
+                "relative grid gap-y-4 border-b border-line py-[clamp(2rem,4vw,3.25rem)] last:border-b-0",
+                "sm:grid-cols-[3.5rem_minmax(0,1fr)] sm:gap-x-6 sm:pl-8",
+                "lg:grid-cols-[7rem_minmax(0,20rem)_minmax(0,1fr)] lg:gap-x-10",
               )}
             >
-              {step.title}
-            </h3>
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "absolute -left-[3.5px] top-[calc(clamp(2rem,4vw,3.25rem)+0.6rem)] hidden h-[7px] w-[7px] transition-colors duration-500 sm:block",
+                  reached ? "bg-accent" : tone === "deck" ? "bg-raise" : "bg-card",
+                )}
+              />
 
-            <div className="max-w-[46ch] sm:col-start-2 lg:col-start-3 lg:row-start-1">
-              <p className="text-[1.0625rem] leading-relaxed text-paper/75">{step.body}</p>
-              <p className="mt-3 text-[0.9375rem] leading-relaxed text-paper/55">
-                {step.detail}
-              </p>
-            </div>
-          </li>
-        );
-      })}
-    </ol>
+              <span
+                className={cn(
+                  "numeral text-[2.5rem] transition-colors duration-500 lg:text-[3.5rem]",
+                  reached ? "text-accent-lift" : "text-figure",
+                )}
+              >
+                {step.number}
+              </span>
+
+              <div className="lg:col-start-2">
+                <h3
+                  className={cn(
+                    "display-md transition-colors duration-500",
+                    reached ? "text-chalk" : "text-slate",
+                  )}
+                >
+                  {step.title}
+                </h3>
+                <p
+                  className={cn(
+                    "label-mono-sm mt-4 transition-colors duration-500",
+                    status === "Complete"
+                      ? "text-dim"
+                      : status === "Active"
+                        ? "text-accent-lift"
+                        : "text-dim",
+                  )}
+                >
+                  Status — {status}
+                </p>
+              </div>
+
+              <div className="max-w-[46ch] sm:col-start-2 lg:col-start-3 lg:row-start-1">
+                <p className="text-[1.0625rem] leading-relaxed text-chalk">{step.body}</p>
+                <p className="mt-3 text-[0.9375rem] leading-relaxed text-slate">
+                  {step.detail}
+                </p>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
   );
 }

@@ -1,6 +1,8 @@
+import AnimatedText from "@/components/ui/AnimatedText";
 import Reveal from "@/components/ui/Reveal";
-import { Container, CropMarks, Eyebrow, Section } from "@/components/ui/Section";
+import { Container, Eyebrow, Section } from "@/components/ui/Section";
 
+/** A set, not a sequence — so nothing here is numbered. */
 const outcomes = [
   {
     title: "Look the part",
@@ -30,26 +32,28 @@ const outcomes = [
 
 export default function WhyBetterBuilt() {
   return (
-    <Section surface="paper" id="why">
+    <Section surface="void" id="why" rule>
       <Container>
-        <div className="grid gap-x-12 gap-y-14 lg:grid-cols-12">
+        <div className="grid gap-x-14 gap-y-14 lg:grid-cols-12">
           <div className="lg:col-span-6">
             <Reveal>
               <Eyebrow>Why Better Built</Eyebrow>
             </Reveal>
-            <Reveal delay={80}>
-              <p className="display-lg mt-7 max-w-[19ch] text-ink-900">
-                A dated website makes a good business look like a risk.
-              </p>
-            </Reveal>
-            <Reveal delay={140}>
-              <div className="mt-8 max-w-[46ch] space-y-5 text-[1.0625rem] leading-relaxed text-ink-900/65">
+
+            <AnimatedText
+              as="h2"
+              className="display-xl mt-8 text-chalk"
+              lines={["A dated website", "makes a good business", "look like a risk."]}
+            />
+
+            <Reveal delay={200}>
+              <div className="mt-9 max-w-[46ch] space-y-5 text-[1.0625rem] leading-relaxed text-slate">
                 <p>
                   Most people meet a business online before they ever meet it in person.
                   If that first look is slow, confusing, or ten years old, it quietly
                   costs work the business already earned.
                 </p>
-                <p>
+                <p className="text-chalk">
                   Better Built exists to fix that. We build sites that represent the
                   business properly — and then get out of the way so it can do its job.
                 </p>
@@ -58,20 +62,27 @@ export default function WhyBetterBuilt() {
           </div>
 
           <div className="lg:col-span-6">
-            <div className="grid gap-x-10 gap-y-9 sm:grid-cols-2">
+            <ul className="grid border-t border-line sm:grid-cols-2">
               {outcomes.map((item, i) => (
-                <Reveal key={item.title} delay={i * 55}>
-                  <CropMarks className="text-ink-900 p-5">
-                    <h3 className="font-display text-[1.0625rem] font-semibold tracking-[-0.02em]">
-                      {item.title}
-                    </h3>
-                    <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-ink-900/60">
-                      {item.body}
-                    </p>
-                  </CropMarks>
-                </Reveal>
+                <li
+                  key={item.title}
+                  className="group border-b border-line sm:odd:border-r sm:odd:border-line"
+                >
+                  <Reveal delay={i * 60}>
+                    <div className="relative h-full px-5 py-7 transition-colors duration-500 group-hover:bg-card sm:px-6">
+                      <span
+                        aria-hidden="true"
+                        className="absolute left-0 top-0 h-px w-0 bg-accent transition-[width] duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"
+                      />
+                      <h3 className="display-sm text-chalk">{item.title}</h3>
+                      <p className="mt-3 text-[0.9375rem] leading-relaxed text-slate">
+                        {item.body}
+                      </p>
+                    </div>
+                  </Reveal>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </div>
       </Container>

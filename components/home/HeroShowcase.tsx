@@ -4,17 +4,20 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { BrowserFrame, PhoneFrame } from "@/components/mockups/Frames";
+import BuildAnimation from "@/components/visuals/BuildAnimation";
 import ProjectPreview from "@/components/work/ProjectPreview";
 import { PREVIEW_DESKTOP, PREVIEW_MOBILE } from "@/components/previews/registry";
 import type { Project } from "@/data/projects";
 import { cn } from "@/lib/utils";
 
-const CYCLE_MS = 5200;
+const CYCLE_MS = 6000;
 
 /**
- * The hero composition: a desktop frame and a phone frame showing the same
- * project, cycling through the featured work. The previews are real rendered
- * layouts, so the hero is a demonstration rather than an illustration.
+ * The hero object: a browser frame that builds itself and resolves into real
+ * client work, then cycles through the rest of it.
+ *
+ * The previews are the finished websites, so the hero is a demonstration
+ * rather than an illustration of one.
  */
 export default function HeroShowcase({ projects }: { projects: Project[] }) {
   const [active, setActive] = useState(0);
@@ -47,13 +50,14 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
     let frame = 0;
     const update = () => {
       frame = 0;
-      const shift = Math.max(-36, Math.min(0, -window.scrollY * 0.06));
+      const shift = Math.max(-40, Math.min(0, 24 - window.scrollY * 0.045));
       node.style.transform = `translate3d(0, ${shift}px, 0)`;
     };
     const onScroll = () => {
       if (!frame) frame = window.requestAnimationFrame(update);
     };
 
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
@@ -71,14 +75,13 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
-      {/* Desktop frame — all previews stay mounted and cross-fade. */}
-      <div className="relative">
-        <Link
-          href={`/work/${current.slug}`}
-          aria-label={`${current.name} — ${current.category}. See The Details.`}
-          className="block focus-visible:outline-offset-4"
-        >
-          <BrowserFrame label={current.domain} className="w-full">
+      <Link
+        href={`/work/${current.slug}`}
+        aria-label={`${current.name} — ${current.category}. See the project.`}
+        className="block rounded-xl focus-visible:outline-offset-4"
+      >
+        <BrowserFrame label={current.domain} status={current.liveUrl ? "Live" : "Concept"}>
+          <BuildAnimation trigger="view">
             <div
               className="relative overflow-hidden"
               style={{
@@ -90,7 +93,7 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
                   key={project.slug}
                   aria-hidden={i !== active}
                   className={cn(
-                    "absolute inset-0 transition-opacity duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+                    "absolute inset-0 transition-opacity duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
                     i === active ? "opacity-100" : "opacity-0",
                   )}
                 >
@@ -98,75 +101,69 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
                     project={project}
                     device="desktop"
                     priority={i === 0}
-                    sizes="(max-width: 1024px) 100vw, 55vw"
+                    sizes="(max-width: 1024px) 100vw, 62vw"
                   />
                 </div>
               ))}
             </div>
-          </BrowserFrame>
-        </Link>
+          </BuildAnimation>
+        </BrowserFrame>
+      </Link>
 
-        {/* Phone, hung off the lower-left corner of the desktop frame. Hidden on
-            phones, where it would cover a quarter of an already-small preview —
-            the mobile design gets a full-size showing on the case study pages. */}
-        <div
-          ref={phoneRef}
-          className="absolute -bottom-16 left-6 hidden w-[26%] max-w-[148px] will-change-transform sm:block lg:-bottom-20 lg:-left-16"
-        >
-          <PhoneFrame notch={!current.cover}>
-            <div
-              className="relative overflow-hidden"
-              style={{
-                aspectRatio: `${PREVIEW_MOBILE.width} / ${PREVIEW_MOBILE.height}`,
-              }}
-            >
-              {projects.map((project, i) => (
-                <div
-                  key={project.slug}
-                  aria-hidden={i !== active}
-                  className={cn(
-                    "absolute inset-0 transition-opacity duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
-                    i === active ? "opacity-100" : "opacity-0",
-                  )}
-                >
-                  <ProjectPreview
-                    project={project}
-                    device="mobile"
-                    sizes="180px"
-                  />
-                </div>
-              ))}
-            </div>
-          </PhoneFrame>
-        </div>
+      {/* The mobile design, hung off the lower-left corner. Hidden on phones,
+          where it would cover a quarter of an already-small preview — the
+          mobile view gets a full-size showing on the project page. */}
+      <div
+        ref={phoneRef}
+        className="absolute -bottom-14 left-4 hidden w-[17%] max-w-[132px] will-change-transform sm:block lg:-bottom-16 lg:-left-12"
+      >
+        <PhoneFrame notch={!current.cover}>
+          <div
+            className="relative overflow-hidden"
+            style={{
+              aspectRatio: `${PREVIEW_MOBILE.width} / ${PREVIEW_MOBILE.height}`,
+            }}
+          >
+            {projects.map((project, i) => (
+              <div
+                key={project.slug}
+                aria-hidden={i !== active}
+                className={cn(
+                  "absolute inset-0 transition-opacity duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+                  i === active ? "opacity-100" : "opacity-0",
+                )}
+              >
+                <ProjectPreview project={project} device="mobile" sizes="160px" />
+              </div>
+            ))}
+          </div>
+        </PhoneFrame>
       </div>
 
-      {/* Caption + selector. The spacer keeps the caption clear of the phone. */}
-      <div className="mt-10 flex flex-wrap items-end justify-between gap-x-6 gap-y-5 sm:mt-20">
-        <span
-          aria-hidden="true"
-          className="hidden w-[20%] max-w-[118px] shrink-0 sm:block"
-        />
+      {/* Caption. The spacer keeps it clear of the phone on wide screens. */}
+      <div className="mt-8 flex flex-wrap items-end justify-between gap-x-8 gap-y-5 border-t border-line-soft pt-5 sm:mt-16">
+        <span aria-hidden="true" className="hidden w-[13%] max-w-[110px] shrink-0 sm:block" />
+
         <div aria-live="polite" className="min-w-0 flex-1">
-          <p className="label-mono text-ink-900/60">
-            <span
-              className={
-                current.status === "client" ? "text-brass-deep" : undefined
-              }
-            >
+          <p className="label-mono-sm flex flex-wrap items-center gap-x-3 gap-y-1 text-dim">
+            <span className={current.status === "client" ? "text-accent-lift" : undefined}>
               {current.status === "client" ? "Client" : "Concept"}
-            </span>{" "}
-            · {current.industry}
+            </span>
+            <span aria-hidden="true" className="h-px w-4 bg-line-hard" />
+            {current.industry}
           </p>
-          <p className="mt-2.5 font-display text-[1.15rem] tracking-[-0.03em]">
-            <Link href={`/work/${current.slug}`} className="link-underline">
+          <p className="mt-3 text-[1.05rem] text-slate">
+            <Link
+              href={`/work/${current.slug}`}
+              className="link-underline font-display text-chalk [font-variation-settings:'wdth'_100,'wght'_600]"
+            >
               {current.name}
             </Link>
-            <span className="text-ink-900/60"> — {current.category}</span>
+            <span className="text-dim"> — {current.category}</span>
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           {projects.map((project, i) => (
             <button
               key={project.slug}
@@ -174,14 +171,14 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
               onClick={() => setActive(i)}
               aria-label={`Show ${project.name}`}
               aria-pressed={i === active}
-              className="group/dot flex min-h-11 items-center py-2"
+              className="group/dot flex min-h-11 items-center px-1 py-2"
             >
               <span
                 className={cn(
-                  "block h-px w-8 transition-[background-color,height] duration-500",
+                  "block h-px w-9 transition-[background-color,height] duration-500",
                   i === active
-                    ? "h-[2px] bg-brass-deep"
-                    : "bg-ink-900/25 group-hover/dot:bg-ink-900/60",
+                    ? "h-[2px] bg-accent"
+                    : "bg-line-hard group-hover/dot:bg-slate",
                 )}
               />
             </button>

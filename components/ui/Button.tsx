@@ -3,65 +3,75 @@ import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 type Variant = "primary" | "secondary" | "quiet";
-type Tone = "light" | "dark";
 type Size = "md" | "lg";
 
 type BaseProps = {
   children: ReactNode;
   variant?: Variant;
-  /** The surface the button sits on, not the button's own color. */
-  tone?: Tone;
   size?: Size;
   className?: string;
   withArrow?: boolean;
 };
 
 const base =
-  "group relative inline-flex items-center justify-center gap-2.5 font-medium " +
-  "transition-[background-color,color,border-color,transform] duration-300 " +
-  "ease-[cubic-bezier(0.22,1,0.36,1)] active:translate-y-px " +
+  "group/btn relative inline-flex items-center justify-center gap-3 rounded-[3px] " +
+  "font-medium tracking-[-0.01em] whitespace-nowrap " +
+  "transition-[background-color,color,border-color,transform] duration-400 " +
+  "ease-[cubic-bezier(0.16,1,0.3,1)] active:translate-y-px " +
   "disabled:pointer-events-none disabled:opacity-50";
 
 const sizes: Record<Size, string> = {
-  md: "h-11 px-5 text-[0.9375rem] tracking-[-0.01em]",
-  lg: "h-[3.25rem] px-7 text-[1rem] tracking-[-0.01em]",
+  md: "h-11 px-5 text-[0.9375rem]",
+  lg: "h-[3.5rem] px-7 text-[1rem]",
 };
 
-const variants: Record<Tone, Record<Variant, string>> = {
-  light: {
-    primary: "bg-ink-900 text-paper hover:bg-ink-700",
-    secondary:
-      "border border-ink-900/20 text-ink-900 hover:border-ink-900 hover:bg-ink-900 hover:text-paper",
-    quiet: "px-0 text-ink-900 hover:text-brass-deep",
-  },
-  dark: {
-    primary: "bg-paper text-ink-900 hover:bg-brass hover:text-ink-950",
-    secondary:
-      "border border-paper/25 text-paper hover:border-brass hover:text-brass",
-    quiet: "px-0 text-paper hover:text-brass",
-  },
+/* White is the loudest thing on a near-black page, so the primary action
+   gets it. The accent is held back for the hover — it reads as a reward
+   rather than as the default state. */
+const variants: Record<Variant, string> = {
+  primary: "bg-chalk text-void hover:bg-accent hover:text-white",
+  secondary:
+    "border border-line text-chalk hover:border-accent hover:bg-accent/8 hover:text-white",
+  quiet: "px-0 text-slate hover:text-chalk",
 };
 
+/**
+ * The arrow leaves to the right while its double arrives from the left —
+ * the movement reads as "forward" rather than as a nudge.
+ */
 function Arrow() {
   return (
-    <svg
-      viewBox="0 0 16 16"
+    <span
       aria-hidden="true"
-      className="h-[0.85em] w-[0.85em] shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
+      className="relative block h-[0.85em] w-[0.85em] shrink-0 overflow-hidden"
     >
-      <path d="M2 8h11M9 4l4 4-4 4" strokeLinecap="square" />
-    </svg>
+      {[
+        "translate-x-0 group-hover/btn:translate-x-[150%]",
+        "-translate-x-[150%] group-hover/btn:translate-x-0",
+      ].map((motion) => (
+        <svg
+          key={motion}
+          viewBox="0 0 16 16"
+          className={cn(
+            "absolute inset-0 h-full w-full transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+            motion,
+          )}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+        >
+          <path d="M2 8h11M9 4l4 4-4 4" strokeLinecap="square" />
+        </svg>
+      ))}
+    </span>
   );
 }
 
-function classes(variant: Variant, tone: Tone, size: Size, className?: string) {
+function classes(variant: Variant, size: Size, className?: string) {
   return cn(
     base,
     variant === "quiet" ? "h-auto" : sizes[size],
-    variants[tone][variant],
+    variants[variant],
     className,
   );
 }
@@ -75,14 +85,13 @@ export function ButtonLink({
   href,
   children,
   variant = "primary",
-  tone = "light",
   size = "md",
   className,
   withArrow = false,
   ...rest
 }: ButtonLinkProps) {
   return (
-    <Link href={href} className={classes(variant, tone, size, className)} {...rest}>
+    <Link href={href} className={classes(variant, size, className)} {...rest}>
       <span>{children}</span>
       {withArrow ? <Arrow /> : null}
     </Link>
@@ -95,7 +104,6 @@ type ButtonProps = BaseProps &
 export function Button({
   children,
   variant = "primary",
-  tone = "light",
   size = "md",
   className,
   withArrow = false,
@@ -103,9 +111,45 @@ export function Button({
   ...rest
 }: ButtonProps) {
   return (
-    <button type={type} className={classes(variant, tone, size, className)} {...rest}>
+    <button type={type} className={classes(variant, size, className)} {...rest}>
       <span>{children}</span>
       {withArrow ? <Arrow /> : null}
     </button>
+  );
+}
+
+/** External link styled as a quiet action, with the corner arrow. */
+export function ExternalAction({
+  href,
+  children,
+  className,
+}: {
+  href: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className={cn(
+        "group/ext label-mono inline-flex items-center gap-2 text-slate transition-colors duration-300 hover:text-chalk",
+        className,
+      )}
+    >
+      <span className="link-underline">{children}</span>
+      <svg
+        viewBox="0 0 16 16"
+        aria-hidden="true"
+        className="h-3 w-3 shrink-0 transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/ext:-translate-y-0.5 group-hover/ext:translate-x-0.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      >
+        <path d="M5 11L11 5M6 5h5v5" strokeLinecap="square" />
+      </svg>
+      <span className="sr-only">(opens in a new tab)</span>
+    </a>
   );
 }

@@ -11,37 +11,48 @@ export function Container({
   return <div className={cn("container-bb", className)}>{children}</div>;
 }
 
-type Surface = "paper" | "paper-dim" | "ink" | "ink-deep";
+type Surface = "void" | "deck" | "card";
 
 const surfaces: Record<Surface, string> = {
-  paper: "bg-paper text-ink-900",
-  "paper-dim": "bg-paper-dim text-ink-900",
-  ink: "bg-ink-900 text-paper on-ink",
-  "ink-deep": "bg-ink-950 text-paper on-ink",
+  void: "bg-void",
+  deck: "bg-deck",
+  card: "bg-card",
 };
 
+/**
+ * A sheet in the drawing set.
+ *
+ * `sheet` draws the two vertical margin rules that run the height of the
+ * section — the site's structural constant. `rule` adds the hairline that
+ * separates one sheet from the next.
+ */
 export function Section({
   children,
-  surface = "paper",
+  surface = "void",
   id,
   className,
   size = "default",
+  sheet = true,
+  rule = false,
 }: {
   children: ReactNode;
   surface?: Surface;
   id?: string;
   className?: string;
   size?: "default" | "tight" | "flush";
+  sheet?: boolean;
+  rule?: boolean;
 }) {
   return (
     <section
       id={id}
       className={cn(
+        "relative scroll-mt-24",
         surfaces[surface],
+        sheet && "sheet",
+        rule && "border-t border-line-soft",
         size === "default" && "py-(--spacing-section)",
-        size === "tight" && "py-[clamp(3.5rem,6vw,6rem)]",
-        // `scroll-mt` keeps anchored sections clear of the sticky header
-        "scroll-mt-20",
+        size === "tight" && "py-[clamp(3.5rem,7vw,7rem)]",
         className,
       )}
     >
@@ -51,8 +62,8 @@ export function Section({
 }
 
 /**
- * Small monospace kicker. `index` renders the section's position when the
- * content is genuinely sequential; otherwise it is omitted.
+ * Monospace kicker. `index` renders a real position — only pass it when the
+ * content is genuinely a sequence, never as decoration.
  */
 export function Eyebrow({
   children,
@@ -64,24 +75,19 @@ export function Eyebrow({
   className?: string;
 }) {
   return (
-    <p className={cn("label-mono flex items-center gap-3 text-current/70", className)}>
+    <p className={cn("label-mono flex items-center gap-3 text-dim", className)}>
       {index ? (
-        <>
-          <span aria-hidden="true" className="text-brass-deep">
-            {index}
-          </span>
-          <span aria-hidden="true" className="h-px w-6 bg-current opacity-40" />
-        </>
+        <span className="text-accent-lift">{index}</span>
       ) : (
-        <span aria-hidden="true" className="h-px w-6 bg-current opacity-40" />
+        <span aria-hidden="true" className="block h-px w-6 bg-accent opacity-70" />
       )}
       <span>{children}</span>
     </p>
   );
 }
 
-/** Adds the four registration ticks that mark a module as "trimmed to size". */
-export function CropMarks({
+/** Registration ticks — marks a module as trimmed to size. */
+export function Ticks({
   children,
   className,
 }: {
@@ -89,10 +95,47 @@ export function CropMarks({
   className?: string;
 }) {
   return (
-    <div className={cn("crop-marks", className)}>
+    <div className={cn("ticks", className)}>
       {children}
-      <span className="crop-mark-b" aria-hidden="true" />
+      <span className="tick-b" aria-hidden="true" />
     </div>
+  );
+}
+
+/**
+ * The technical annotation strip. Reads like the notes running along the
+ * edge of a drawing: short, factual, monospaced.
+ */
+export function TechMeta({
+  items,
+  className,
+}: {
+  items: (string | { label: string; value: string })[];
+  className?: string;
+}) {
+  return (
+    <ul
+      className={cn(
+        "label-mono-sm flex flex-wrap items-center gap-x-6 gap-y-2 text-dim",
+        className,
+      )}
+    >
+      {items.map((item) => {
+        const key = typeof item === "string" ? item : `${item.label}${item.value}`;
+        return (
+          <li key={key} className="flex items-center gap-2">
+            {typeof item === "string" ? (
+              item
+            ) : (
+              <>
+                <span>{item.label}</span>
+                <span className="text-slate">{item.value}</span>
+              </>
+            )}
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
@@ -121,10 +164,8 @@ export function SectionHeading({
       )}
     >
       {eyebrow ? <Eyebrow index={index}>{eyebrow}</Eyebrow> : null}
-      <h2 className="display-xl max-w-[18ch]">{title}</h2>
-      {lede ? (
-        <p className="lede max-w-[52ch] text-current/65">{lede}</p>
-      ) : null}
+      <h2 className="display-xl max-w-[18ch] text-chalk">{title}</h2>
+      {lede ? <p className="lede max-w-[52ch]">{lede}</p> : null}
     </div>
   );
 }

@@ -4,10 +4,16 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 
 import Wordmark from "./Wordmark";
+import DigitalGrid from "@/components/visuals/DigitalGrid";
+import { ButtonLink } from "@/components/ui/Button";
 import { legalNav, primaryNav, site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-/** Full-height navigation panel. Designed for the phone, not scaled down from desktop. */
+/**
+ * The menu is the site's table of contents, so it is set like one: every route
+ * numbered, ruled, and given the full width of the screen. Designed for the
+ * phone rather than folded down from the desktop nav.
+ */
 export default function MobileMenu({
   open,
   onClose,
@@ -35,7 +41,7 @@ export default function MobileMenu({
 
       // Keep focus inside the panel while it is open.
       const focusables = panelRef.current?.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled])',
+        "a[href], button:not([disabled])",
       );
       if (!focusables?.length) return;
       const first = focusables[0];
@@ -67,55 +73,99 @@ export default function MobileMenu({
       aria-label="Site menu"
       inert={!open ? true : undefined}
       className={cn(
-        "on-ink fixed inset-0 z-[60] flex flex-col bg-ink-950 text-paper lg:hidden",
-        "transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        "fixed inset-0 z-[60] flex flex-col bg-void lg:hidden",
+        "transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
         open
           ? "pointer-events-auto translate-y-0 opacity-100"
-          : "pointer-events-none -translate-y-2 opacity-0",
+          : "pointer-events-none -translate-y-3 opacity-0",
       )}
     >
-      <div className="container-bb flex h-[4.5rem] shrink-0 items-center justify-between">
-        <Wordmark className="text-paper" markClassName="text-brass" />
+      <DigitalGrid size={56} origin={{ x: "50%", y: "18%" }} className="opacity-70" />
+
+      <div className="container-bb relative flex h-[4.75rem] shrink-0 items-center justify-between">
+        <Wordmark />
         <button
           ref={closeRef}
           type="button"
           onClick={onClose}
           aria-label="Close menu"
-          className="-mr-2 inline-flex h-11 w-11 items-center justify-center text-paper"
+          className="-mr-2 inline-flex h-11 w-11 items-center justify-center text-chalk"
         >
-          <svg viewBox="0 0 20 20" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.4">
+          <svg
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+            className="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.3"
+          >
             <path d="M4 4l12 12M16 4L4 16" strokeLinecap="square" />
           </svg>
         </button>
       </div>
 
-      <nav aria-label="Mobile" className="container-bb flex-1 overflow-y-auto pt-6">
-        <ul className="border-t border-paper/10">
+      <nav
+        aria-label="Mobile"
+        className="container-bb relative flex-1 overflow-y-auto overscroll-contain pt-4"
+      >
+        <ul>
           {primaryNav.map((item, i) => (
-            <li key={item.href} className="border-b border-paper/10">
+            <li key={item.href} className="border-b border-line-soft">
               <Link
                 href={item.href}
                 onClick={onClose}
-                style={{ transitionDelay: open ? `${120 + i * 55}ms` : "0ms" }}
+                style={{ transitionDelay: open ? `${140 + i * 55}ms` : "0ms" }}
                 className={cn(
-                  "flex items-baseline py-5 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-                  open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
+                  "group flex items-baseline gap-5 py-[3vh] transition-[opacity,transform] duration-600 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                  open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
                 )}
               >
-                <span className="display-lg">{item.label}</span>
+                <span className="label-mono-sm w-6 shrink-0 text-accent-lift">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="display-lg text-chalk">{item.label}</span>
+                <span
+                  aria-hidden="true"
+                  className="ml-auto self-center text-dim transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1"
+                >
+                  <svg
+                    viewBox="0 0 16 16"
+                    className="h-3.5 w-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  >
+                    <path d="M2 8h11M9 4l4 4-4 4" strokeLinecap="square" />
+                  </svg>
+                </span>
               </Link>
             </li>
           ))}
         </ul>
       </nav>
 
-      <div className="container-bb shrink-0 pb-10 pt-8">
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 label-mono text-paper/55">
-          <a href={`mailto:${site.email}`} className="link-underline">
+      <div className="container-bb relative shrink-0 space-y-6 border-t border-line pb-9 pt-7">
+        <ButtonLink
+          href="/contact"
+          size="lg"
+          withArrow
+          onClick={onClose}
+          className="label-mono w-full"
+        >
+          Start a project
+        </ButtonLink>
+
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <a href={`mailto:${site.email}`} className="link-underline label-mono text-slate">
             {site.email}
           </a>
           {legalNav.map((item) => (
-            <Link key={item.href} href={item.href} onClick={onClose} className="link-underline">
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onClose}
+              className="link-underline label-mono text-dim"
+            >
               {item.label}
             </Link>
           ))}

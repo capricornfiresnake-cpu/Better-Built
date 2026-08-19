@@ -1,33 +1,34 @@
 import type { Metadata, Viewport } from "next";
-import { Azeret_Mono, Fraunces, Karla, Newsreader } from "next/font/google";
+import { Archivo, Azeret_Mono, Instrument_Sans, Newsreader } from "next/font/google";
 import "./globals.css";
 
 import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
+import PageTransition from "@/components/layout/PageTransition";
 import { organizationSchema } from "@/lib/seo";
 import { site } from "@/lib/site";
 
-/* Display face. Fraunces is a variable serif with two axes almost nobody
-   touches: WONK swaps in the designer's deliberately irregular letterforms,
-   and SOFT rounds the terminals. Both are dialled up here — a business whose
-   clients are hand-painted bar signs and surf shacks should not speak in a
-   neutral grotesque. */
-const fraunces = Fraunces({
+/* Display. Archivo is a grotesque drawn for signage and print
+   production, and it carries a width axis — which the type scale uses
+   as an instrument: the larger the setting, the narrower the cut, the
+   way a real title block narrows as it scales up. */
+const archivo = Archivo({
   subsets: ["latin"],
-  axes: ["SOFT", "WONK", "opsz"],
-  variable: "--font-fraunces",
+  axes: ["wdth"],
+  variable: "--font-archivo",
   display: "swap",
 });
 
-/* Body and UI. Karla is a grotesque with genuinely odd details — a splayed
-   'k', a curled 'l', an open 'a' — that stay invisible at reading size but
-   keep the page from feeling machine-set. Quiet where it needs to be. */
-const karla = Karla({
+/* Body and interface. Neutral enough to disappear at reading size,
+   with just enough drawing in the 'a' and 'g' to not be Inter. */
+const instrument = Instrument_Sans({
   subsets: ["latin"],
-  variable: "--font-karla",
+  variable: "--font-instrument",
   display: "swap",
 });
 
+/* The technical layer: coordinates, indices, statuses, dimensions.
+   Azeret's squared counters read like CAD annotation. */
 const azeret = Azeret_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
@@ -35,7 +36,8 @@ const azeret = Azeret_Mono({
   display: "swap",
 });
 
-/* Reserved for portfolio previews whose brands call for an editorial voice. */
+/* Reserved for portfolio previews whose brands call for an editorial
+   voice. Not part of the site's own typography. */
 const newsreader = Newsreader({
   subsets: ["latin"],
   variable: "--font-newsreader",
@@ -73,27 +75,29 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f7f7f5" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b0c0f" },
-  ],
-  colorScheme: "light",
+  themeColor: "#08090b",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${karla.variable} ${azeret.variable} ${newsreader.variable}`}>
+    <html
+      lang="en"
+      className={`${archivo.variable} ${instrument.variable} ${azeret.variable} ${newsreader.variable}`}
+    >
       <body className="antialiased">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-none focus:bg-ink-900 focus:px-5 focus:py-3 focus:text-paper focus:label-mono"
+          className="label-mono sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-chalk focus:px-5 focus:py-3 focus:text-void"
         >
           Skip to content
         </a>
         <SiteHeader />
-        <main id="main">{children}</main>
+        <main id="main">
+          <PageTransition>{children}</PageTransition>
+        </main>
         <SiteFooter />
         <script
           type="application/ld+json"

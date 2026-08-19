@@ -1,5 +1,8 @@
 export type Service = {
   id: string;
+  /** Two-letter reference. Services are a set, not a sequence, so they are
+      coded like drawing references rather than numbered like steps. */
+  code: string;
   title: string;
   short: string;
   body: string;
@@ -9,6 +12,7 @@ export type Service = {
 export const services: Service[] = [
   {
     id: "design",
+    code: "DS",
     title: "Custom Website Design",
     short: "Designed around your business, not a template.",
     body: "We start from what your business actually sells and who actually buys it, then design the pages around that. No stock layout with your logo dropped in.",
@@ -20,6 +24,7 @@ export const services: Service[] = [
   },
   {
     id: "mobile",
+    code: "MB",
     title: "Mobile-First Development",
     short: "Built for the phone first, because that's where your customers are.",
     body: "Most people will meet your business on a phone. We design the small screen first and scale up, so nothing is an afterthought at the size that matters most.",
@@ -31,6 +36,7 @@ export const services: Service[] = [
   },
   {
     id: "conversion",
+    code: "CV",
     title: "Conversion-Focused Design",
     short: "Clear next steps on every page.",
     body: "A website earns its keep by turning visitors into calls, forms, and bookings. We place the ask where people are ready to act, and keep it visible without nagging.",
@@ -42,6 +48,7 @@ export const services: Service[] = [
   },
   {
     id: "seo",
+    code: "SE",
     title: "SEO Foundations",
     short: "The technical groundwork search engines need.",
     body: "We handle the foundations: clean markup, correct headings, titles and descriptions, a sitemap, and fast pages. Foundations are not a ranking guarantee — they are the part that has to be right before anything else works.",
@@ -53,6 +60,7 @@ export const services: Service[] = [
   },
   {
     id: "launch",
+    code: "LN",
     title: "Website Launch",
     short: "Domain, hosting, deployment — handled.",
     body: "We take the site from finished to live. If you already have a domain we move it across; if you don't, we help you get one. Hosting is set up and configured before launch day.",
@@ -64,6 +72,7 @@ export const services: Service[] = [
   },
   {
     id: "updates",
+    code: "UP",
     title: "Ongoing Updates",
     short: "Send changes, we make them.",
     body: "Businesses change. New services, new hours, new photos, a new page. Send what you need changed and we handle it — no dashboard to learn, no plugin to update.",

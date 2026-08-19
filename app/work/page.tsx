@@ -1,8 +1,7 @@
 import PageHeader from "@/components/layout/PageHeader";
-import ProjectCard from "@/components/work/ProjectCard";
+import ProjectShowcase from "@/components/work/ProjectShowcase";
 import Reveal from "@/components/ui/Reveal";
 import { Container, Section } from "@/components/ui/Section";
-import CtaBand from "@/sections/CtaBand";
 import { projects } from "@/data/projects";
 import { pageMeta } from "@/lib/seo";
 
@@ -13,54 +12,58 @@ export const metadata = pageMeta({
   path: "/work",
 });
 
-/** Larger cards for the first two projects, then an even grid. */
-function spanFor(index: number) {
-  if (index === 0) return "lg:col-span-7";
-  if (index === 1) return "lg:col-span-5 lg:self-end";
-  return "lg:col-span-4";
-}
-
-/** Tells next/image how wide each cover actually renders, so it can pick a file. */
-function sizesFor(index: number) {
-  if (index === 0) return "(max-width: 1024px) 100vw, 58vw";
-  if (index === 1) return "(max-width: 1024px) 100vw, 41vw";
-  return "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
-}
+/** Preview left, preview right, then full width. Five projects never settle. */
+const layouts = ["left", "right", "full", "left", "right"] as const;
 
 export default function WorkPage() {
+  const live = projects.filter((project) => project.liveUrl).length;
+
   return (
     <>
       <PageHeader
         eyebrow="Portfolio"
-        title="Work that looks like the business behind it."
+        lines={["Work"]}
+        lede="Websites that look like the business behind them — and say so in the first two seconds."
+        meta={[
+          { label: "Projects", value: String(projects.length) },
+          { label: "Live client sites", value: String(live) },
+          { label: "Design studies", value: String(projects.length - live) },
+        ]}
       />
 
-      <Section surface="paper" size="tight" className="pt-0">
+      <Section surface="void" size="tight">
         <Container>
-          <div className="grid gap-x-8 gap-y-[clamp(3rem,6vw,5rem)] lg:grid-cols-12">
+          <div className="space-y-[clamp(4.5rem,10vw,9rem)]">
             {projects.map((project, i) => (
-              <div key={project.slug} className={spanFor(i)}>
-                <Reveal delay={(i % 3) * 60}>
-                  <ProjectCard
-                    project={project}
-                    large={i < 2}
-                    priority={i === 0}
-                    sizes={sizesFor(i)}
-                  />
-                </Reveal>
-              </div>
+              <ProjectShowcase
+                key={project.slug}
+                project={project}
+                index={i}
+                layout={layouts[i % layouts.length]}
+                headingLevel="h2"
+                priority={i === 0}
+              />
             ))}
           </div>
         </Container>
       </Section>
 
-      <CtaBand
-        eyebrow="Your turn"
-        title="Your business has evolved. Your website should too."
-        body="Tell us what you do and we'll show you what it could look like."
-        cta={{ label: "Start Your Project", href: "/contact" }}
-        secondary={{ label: "See pricing", href: "/pricing" }}
-      />
+      <Section surface="deck" size="tight" rule>
+        <Container>
+          <Reveal>
+            <div className="grid gap-x-14 gap-y-6 lg:grid-cols-12">
+              <p className="label-mono text-dim lg:col-span-4">On labelling</p>
+              <p className="max-w-[62ch] text-[1.0625rem] leading-relaxed text-slate lg:col-span-8">
+                Client work carries a <span className="text-accent-lift">Client</span> tag
+                and links to the live site. Everything else is marked{" "}
+                <span className="text-chalk">Concept</span> — our own design study for a
+                business that does not exist. We would rather show fewer real projects
+                than pad the page with work we did not do.
+              </p>
+            </div>
+          </Reveal>
+        </Container>
+      </Section>
     </>
   );
 }

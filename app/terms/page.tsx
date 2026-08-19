@@ -20,11 +20,11 @@ export default function TermsPage() {
     <>
       <PageHeader
         eyebrow="Legal"
-        title="Terms of Service"
+        lines={["Terms of", "Service"]}
         lede="The terms that apply when you use this website."
       />
 
-      <Section surface="paper" size="tight" className="pt-0">
+      <Section surface="void" size="tight">
         <Container>
           <Prose>
             <h2>Using this website</h2>

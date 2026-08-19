@@ -23,11 +23,11 @@ export default function PrivacyPage() {
     <>
       <PageHeader
         eyebrow="Legal"
-        title="Privacy Policy"
+        lines={["Privacy", "Policy"]}
         lede="What we collect, why we collect it, and what we do with it."
       />
 
-      <Section surface="paper" size="tight" className="pt-0">
+      <Section surface="void" size="tight">
         <Container>
           <Prose>
             <h2>What this page covers</h2>

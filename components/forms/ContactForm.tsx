@@ -9,9 +9,9 @@ import { cn } from "@/lib/utils";
 type Status = "idle" | "submitting" | "success" | "error";
 
 const fieldBase =
-  "w-full border-0 border-b border-ink-900/20 bg-transparent px-0 pb-2.5 pt-1 " +
-  "text-[1.0625rem] text-ink-900 placeholder:text-ink-900/30 " +
-  "transition-colors duration-300 focus:border-ink-900 focus:outline-none " +
+  "w-full rounded-none border-0 border-b border-line bg-transparent px-0 pb-2.5 pt-1 " +
+  "text-[1.0625rem] text-chalk placeholder:text-dim " +
+  "transition-colors duration-300 focus:border-accent focus:outline-none " +
   "focus-visible:outline-none";
 
 function Field({
@@ -26,10 +26,12 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div className="group">
-      <label htmlFor={htmlFor} className="label-mono block text-ink-900/60">
+    <div>
+      <label htmlFor={htmlFor} className="label-mono block text-dim">
         {label}
-        {hint ? <span className="ml-2 normal-case tracking-normal opacity-60">{hint}</span> : null}
+        {hint ? (
+          <span className="ml-2 normal-case tracking-normal opacity-70">{hint}</span>
+        ) : null}
       </label>
       <div className="mt-3">{children}</div>
     </div>
@@ -84,21 +86,21 @@ export default function ContactForm() {
     return (
       <div
         role="status"
-        className="border border-ink-900/12 bg-paper p-[clamp(1.75rem,4vw,3rem)]"
+        className="rounded-lg border border-line bg-card p-[clamp(1.75rem,4vw,3rem)]"
       >
-        <p className="label-mono text-brass-deep">Received</p>
-        <h2 className="display-lg mt-5 max-w-[18ch]">
+        <p className="label-mono text-accent-lift">Received</p>
+        <h2 className="display-lg mt-6 max-w-[18ch] text-chalk">
           Thanks — we&rsquo;ve got it.
         </h2>
-        <p className="mt-5 max-w-[46ch] text-[1.0625rem] leading-relaxed text-ink-900/65">
-          We&rsquo;ll read through what you sent and come back with a few questions,
-          a plan, and a timeline. If anything is urgent, reply to the email we send
-          and it&rsquo;ll reach us directly.
+        <p className="mt-6 max-w-[46ch] text-[1.0625rem] leading-relaxed text-slate">
+          We&rsquo;ll read through what you sent and come back with a few questions, a
+          plan, and a timeline. If anything is urgent, reply to the email we send and it
+          will reach us directly.
         </p>
         <button
           type="button"
           onClick={() => setStatus("idle")}
-          className="link-underline mt-8 label-mono text-ink-900/60"
+          className="link-underline label-mono mt-8 text-slate"
         >
           Send another project
         </button>
@@ -107,7 +109,7 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate={false} className="grid gap-x-10 gap-y-9">
+    <form onSubmit={handleSubmit} className="grid gap-x-10 gap-y-9">
       {/* Simple bot trap. Real people never see or fill this. */}
       <div aria-hidden="true" className="absolute h-0 w-0 overflow-hidden">
         <label htmlFor={`${id}-company-url`}>Leave this empty</label>
@@ -164,7 +166,7 @@ export default function ContactForm() {
             id={`${id}-industry`}
             name="industry"
             defaultValue=""
-            className={cn(fieldBase, "appearance-none pr-6")}
+            className={cn(fieldBase, "appearance-none pr-6 [&>option]:bg-card")}
           >
             <option value="" disabled>
               Choose one
@@ -191,16 +193,16 @@ export default function ContactForm() {
       </div>
 
       <fieldset>
-        <legend className="label-mono text-ink-900/60">What do you need?</legend>
+        <legend className="label-mono text-dim">What do you need?</legend>
         <div className="mt-4 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
           {needOptions.map((option) => (
             <label
               key={option}
               className={cn(
-                "flex cursor-pointer items-center gap-3 border px-4 py-3.5 text-[0.9375rem] transition-colors duration-300",
+                "flex cursor-pointer items-center gap-3 rounded-[3px] border px-4 py-3.5 text-[0.9375rem] transition-colors duration-300",
                 need === option
-                  ? "border-ink-900 bg-ink-900 text-paper"
-                  : "border-ink-900/15 text-ink-900/70 hover:border-ink-900/45",
+                  ? "border-accent bg-accent/12 text-chalk"
+                  : "border-line text-slate hover:border-line-hard hover:text-chalk",
               )}
             >
               <input
@@ -215,7 +217,7 @@ export default function ContactForm() {
                 aria-hidden="true"
                 className={cn(
                   "block h-2 w-2 shrink-0",
-                  need === option ? "bg-brass" : "bg-ink-900/25",
+                  need === option ? "bg-accent" : "bg-line-hard",
                 )}
               />
               {option}
@@ -241,17 +243,18 @@ export default function ContactForm() {
           withArrow
           disabled={status === "submitting"}
           aria-busy={status === "submitting"}
+          className="label-mono"
         >
-          {status === "submitting" ? "Sending…" : "Start My Project"}
+          {status === "submitting" ? "Sending…" : "Start my project"}
         </Button>
-        <p className="max-w-[32ch] text-[0.875rem] leading-relaxed text-ink-900/60">
+        <p className="max-w-[32ch] text-[0.875rem] leading-relaxed text-dim">
           No obligation. We&rsquo;ll reply with questions and a timeline.
         </p>
       </div>
 
-      <p role="status" aria-live="polite" className="min-h-[1.25rem] text-[0.9375rem]">
+      <p role="status" aria-live="polite" className="min-h-5 text-[0.9375rem]">
         {status === "error" && error ? (
-          <span className="text-brass-deep">{error}</span>
+          <span className="text-accent-lift">{error}</span>
         ) : null}
       </p>
     </form>

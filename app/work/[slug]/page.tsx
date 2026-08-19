@@ -3,11 +3,13 @@ import { notFound } from "next/navigation";
 
 import { BrowserFrame, PhoneFrame } from "@/components/mockups/Frames";
 import ProjectPreview from "@/components/work/ProjectPreview";
-import { StatusTag } from "@/components/work/ProjectCard";
+import StatusTag from "@/components/work/StatusTag";
+import AnimatedText from "@/components/ui/AnimatedText";
 import Reveal from "@/components/ui/Reveal";
-import { ButtonLink } from "@/components/ui/Button";
+import Sheen from "@/components/ui/Sheen";
+import { ButtonLink, ExternalAction } from "@/components/ui/Button";
 import { Container, Eyebrow, Section } from "@/components/ui/Section";
-import CtaBand from "@/sections/CtaBand";
+import DigitalGrid from "@/components/visuals/DigitalGrid";
 import { adjacentProjects, getProject, projects } from "@/data/projects";
 import { breadcrumbSchema, pageMeta } from "@/lib/seo";
 
@@ -44,30 +46,45 @@ export default async function CaseStudyPage({ params }: PageProps) {
   if (!project) notFound();
 
   const { previous, next } = adjacentProjects(project.slug);
+  const index = projects.findIndex((p) => p.slug === project.slug);
 
   return (
     <>
-      <header className="bg-paper pt-[clamp(7rem,12vw,9.5rem)]">
-        <Container>
+      <header className="sheet relative overflow-hidden bg-void pt-[clamp(7rem,13vw,10rem)]">
+        <DigitalGrid size={80} origin={{ x: "68%", y: "0%" }} className="opacity-70" />
+
+        <Container className="relative">
           <Reveal>
             <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-              <Link href="/work" className="link-underline label-mono text-ink-900/60">
+              <Link href="/work" className="link-underline label-mono text-slate">
                 ← All work
               </Link>
-              <span aria-hidden="true" className="h-px w-8 bg-ink-900/20" />
-              <span className="label-mono text-ink-900/60">{project.industry}</span>
+              <span aria-hidden="true" className="h-px w-8 bg-line-hard" />
+              <span className="label-mono text-dim">{project.industry}</span>
               <StatusTag project={project} />
+              <span className="label-mono-sm ml-auto text-dim">
+                {String(index + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+              </span>
             </div>
           </Reveal>
 
-          <div className="mt-9 grid items-end gap-x-12 gap-y-8 lg:grid-cols-12">
-            <Reveal delay={70} className="lg:col-span-7">
-              <h1 className="display-hero text-ink-900">{project.name}</h1>
-              <p className="mt-5 text-[1.125rem] text-ink-900/65">{project.category}</p>
-            </Reveal>
-            <Reveal delay={130} className="lg:col-span-5">
-              <p className="label-mono text-ink-900/60">Design objective</p>
-              <p className="mt-4 max-w-[46ch] text-[1.0625rem] leading-relaxed text-ink-900/70">
+          <div className="mt-10 grid items-end gap-x-14 gap-y-9 lg:grid-cols-12">
+            <div className="lg:col-span-7">
+              <AnimatedText
+                as="h1"
+                immediate
+                delay={80}
+                className="display-mega text-chalk"
+                lines={[project.name]}
+              />
+              <Reveal delay={320}>
+                <p className="mt-6 text-[1.125rem] text-slate">{project.category}</p>
+              </Reveal>
+            </div>
+
+            <Reveal delay={280} className="lg:col-span-5">
+              <p className="label-mono text-dim">Design objective</p>
+              <p className="mt-5 max-w-[46ch] text-[1.0625rem] leading-relaxed text-slate">
                 {project.objective}
               </p>
             </Reveal>
@@ -75,51 +92,55 @@ export default async function CaseStudyPage({ params }: PageProps) {
         </Container>
       </header>
 
-      {/* Full-width desktop preview */}
-      <Section surface="paper" size="tight">
+      {/* The site itself, at full width */}
+      <Section surface="void" size="tight">
         <Container>
-          <Reveal mode="clip">
-            {project.liveUrl ? (
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`Visit the live ${project.name} website (opens in a new tab)`}
-                className="group relative block focus-visible:outline-offset-4"
-              >
-                <BrowserFrame
-                  label={project.domain}
-                  className="transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1"
+          <Reveal mode="settle">
+            <Sheen className="group relative rounded-xl">
+              {project.liveUrl ? (
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`Visit the live ${project.name} website (opens in a new tab)`}
+                  className="block rounded-xl focus-visible:outline-offset-4"
                 >
+                  <BrowserFrame
+                    label={project.domain}
+                    status="Live"
+                    className="relative z-[1] transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-1"
+                  >
+                    <ProjectPreview
+                      project={project}
+                      device="desktop"
+                      priority
+                      sizes="(max-width: 1440px) 100vw, 1440px"
+                    />
+                  </BrowserFrame>
+                  <span
+                    aria-hidden="true"
+                    className="label-mono pointer-events-none absolute bottom-6 right-6 z-[2] inline-flex translate-y-2 items-center gap-2 rounded-[3px] bg-chalk px-4 py-3 text-void opacity-0 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:opacity-100"
+                  >
+                    Visit live site
+                    <svg viewBox="0 0 16 16" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="1.8">
+                      <path d="M5 11L11 5M6 5h5v5" strokeLinecap="square" />
+                    </svg>
+                  </span>
+                </a>
+              ) : (
+                <BrowserFrame label={project.domain} status="Concept">
                   <ProjectPreview
                     project={project}
                     device="desktop"
                     priority
-                    sizes="(max-width: 1408px) 100vw, 1408px"
+                    sizes="(max-width: 1440px) 100vw, 1440px"
                   />
                 </BrowserFrame>
-                <span
-                  aria-hidden="true"
-                  className="pointer-events-none absolute bottom-6 right-6 inline-flex translate-y-2 items-center gap-2 bg-ink-900 px-4 py-3 label-mono text-paper opacity-0 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100"
-                >
-                  Visit live site
-                  <svg viewBox="0 0 16 16" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="1.6">
-                    <path d="M5 11L11 5M6 5h5v5" strokeLinecap="square" />
-                  </svg>
-                </span>
-              </a>
-            ) : (
-              <BrowserFrame label={project.domain}>
-                <ProjectPreview
-                  project={project}
-                  device="desktop"
-                  priority
-                  sizes="(max-width: 1408px) 100vw, 1408px"
-                />
-              </BrowserFrame>
-            )}
+              )}
+            </Sheen>
           </Reveal>
-          <p className="mt-5 label-mono text-ink-900/60">
+
+          <p className="label-mono mt-5 text-dim">
             {project.liveUrl
               ? `Desktop — live at ${project.domain}`
               : `Desktop — ${project.name} home page`}
@@ -128,14 +149,14 @@ export default async function CaseStudyPage({ params }: PageProps) {
       </Section>
 
       {/* Specification */}
-      <Section surface="paper-dim" size="tight">
+      <Section surface="deck" size="tight" rule>
         <Container>
-          <div className="grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-x-12 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
             <Reveal>
-              <p className="label-mono text-ink-900/60">Scope</p>
-              <ul className="mt-5 space-y-2.5 text-[0.9375rem] text-ink-900/75">
+              <p className="label-mono text-dim">Scope</p>
+              <ul className="mt-6 space-y-0 border-t border-line-soft text-[0.9375rem] text-slate">
                 {project.scope.map((item) => (
-                  <li key={item} className="border-b border-ink-900/10 pb-2.5">
+                  <li key={item} className="border-b border-line-soft py-2.5">
                     {item}
                   </li>
                 ))}
@@ -143,69 +164,53 @@ export default async function CaseStudyPage({ params }: PageProps) {
             </Reveal>
 
             <Reveal delay={60}>
-              <p className="label-mono text-ink-900/60">Palette</p>
-              <ul className="mt-5 space-y-2.5">
+              <p className="label-mono text-dim">Palette</p>
+              <ul className="mt-6 border-t border-line-soft">
                 {project.palette.map((swatch) => (
                   <li
                     key={swatch.hex}
-                    className="flex items-center gap-3 border-b border-ink-900/10 pb-2.5"
+                    className="flex items-center gap-3 border-b border-line-soft py-2.5"
                   >
                     <span
                       aria-hidden="true"
-                      className="block h-5 w-5 shrink-0 ring-1 ring-inset ring-ink-900/10"
+                      className="block h-5 w-5 shrink-0 rounded-[2px] ring-1 ring-inset ring-white/15"
                       style={{ backgroundColor: swatch.hex }}
                     />
-                    <span className="text-[0.9375rem] text-ink-900/75">{swatch.name}</span>
-                    <span className="ml-auto label-mono text-ink-900/60">{swatch.hex}</span>
+                    <span className="text-[0.9375rem] text-slate">{swatch.name}</span>
+                    <span className="label-mono-sm ml-auto text-dim">{swatch.hex}</span>
                   </li>
                 ))}
               </ul>
             </Reveal>
 
             <Reveal delay={120}>
-              <p className="label-mono text-ink-900/60">Typography</p>
-              <ul className="mt-5 space-y-2.5 text-[0.9375rem]">
+              <p className="label-mono text-dim">Typography</p>
+              <ul className="mt-6 border-t border-line-soft text-[0.9375rem]">
                 {project.typography.map((type) => (
-                  <li key={type.role} className="border-b border-ink-900/10 pb-2.5">
-                    <span className="label-mono text-ink-900/60">{type.role}</span>
-                    <span className="mt-1.5 block text-ink-900/75">{type.value}</span>
+                  <li key={type.role} className="border-b border-line-soft py-2.5">
+                    <span className="label-mono-sm text-dim">{type.role}</span>
+                    <span className="mt-2 block text-slate">{type.value}</span>
                   </li>
                 ))}
               </ul>
             </Reveal>
 
             <Reveal delay={180}>
-              <p className="label-mono text-ink-900/60">Status</p>
-              <div className="mt-5 border-b border-ink-900/10 pb-2.5">
-                <p className="text-[0.9375rem] leading-relaxed text-ink-900/75">
+              <p className="label-mono text-dim">Status</p>
+              <div className="mt-6 border-t border-line-soft pt-3">
+                <p className="text-[0.9375rem] leading-relaxed text-slate">
                   {project.status === "concept"
                     ? "Concept study by Better Built. Not a client engagement."
                     : "Client project, designed and built by Better Built. Live now."}
                 </p>
               </div>
               {project.liveUrl ? (
-                <a
-                  href={project.liveUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group mt-5 inline-flex items-center gap-2 text-[0.9375rem] text-ink-900"
-                >
-                  <span className="link-underline">Visit the live site</span>
-                  <svg
-                    viewBox="0 0 16 16"
-                    aria-hidden="true"
-                    className="h-3.5 w-3.5 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  >
-                    <path d="M5 11L11 5M6 5h5v5" strokeLinecap="square" />
-                  </svg>
-                  <span className="sr-only">(opens in a new tab)</span>
-                </a>
+                <div className="mt-6">
+                  <ExternalAction href={project.liveUrl}>Visit the live site</ExternalAction>
+                </div>
               ) : null}
-              <div className="mt-6">
-                <ButtonLink href="/contact" variant="secondary" withArrow>
+              <div className="mt-8">
+                <ButtonLink href="/contact" variant="secondary" withArrow className="label-mono">
                   Start a project
                 </ButtonLink>
               </div>
@@ -215,21 +220,25 @@ export default async function CaseStudyPage({ params }: PageProps) {
       </Section>
 
       {/* Key decisions */}
-      <Section surface="paper">
+      <Section surface="void" rule>
         <Container>
-          <div className="grid gap-x-12 gap-y-10 lg:grid-cols-12">
+          <div className="grid gap-x-14 gap-y-10 lg:grid-cols-12">
             <Reveal className="lg:col-span-4">
               <Eyebrow>Design decisions</Eyebrow>
-              <h2 className="display-lg mt-6 max-w-[14ch]">Why it looks like this.</h2>
+              <h2 className="display-lg mt-7 max-w-[13ch] text-chalk">
+                Why it looks like this.
+              </h2>
             </Reveal>
 
             <div className="lg:col-span-8">
-              <div className="border-t border-ink-900/12">
+              <div className="border-t border-line">
                 {project.decisions.map((decision, i) => (
                   <Reveal key={decision.title} delay={i * 70}>
-                    <div className="grid gap-x-8 gap-y-3 border-b border-ink-900/12 py-8 sm:grid-cols-[minmax(0,20rem)_1fr]">
-                      <h3 className="display-md max-w-[22ch]">{decision.title}</h3>
-                      <p className="max-w-[52ch] text-[1rem] leading-relaxed text-ink-900/65">
+                    <div className="group grid gap-x-8 gap-y-3 border-b border-line py-8 sm:grid-cols-[minmax(0,19rem)_1fr]">
+                      <h3 className="display-md max-w-[22ch] text-chalk transition-colors duration-400 group-hover:text-accent-lift">
+                        {decision.title}
+                      </h3>
+                      <p className="max-w-[52ch] text-[1rem] leading-relaxed text-slate">
                         {decision.body}
                       </p>
                     </div>
@@ -241,34 +250,34 @@ export default async function CaseStudyPage({ params }: PageProps) {
         </Container>
       </Section>
 
-      {/* Responsive views */}
-      <Section surface="ink">
+      {/* Across devices */}
+      <Section surface="deck" rule>
         <Container>
           <Reveal>
-            <Eyebrow className="text-paper/70">Across devices</Eyebrow>
-            <h2 className="display-lg mt-6 max-w-[16ch] text-paper">
+            <Eyebrow>Across devices</Eyebrow>
+            <h2 className="display-lg mt-7 max-w-[16ch] text-chalk">
               Designed for the phone, not shrunk to fit it.
             </h2>
           </Reveal>
 
-          <div className="mt-[clamp(2.5rem,5vw,4rem)] grid items-center gap-10 lg:grid-cols-12">
-            <Reveal delay={80} className="lg:col-span-8">
+          <div className="mt-[clamp(2.5rem,5vw,4rem)] grid items-center gap-12 lg:grid-cols-12">
+            <Reveal delay={80} mode="settle" className="min-w-0 lg:col-span-8">
               <BrowserFrame label={project.domain}>
                 <ProjectPreview
                   project={project}
                   device="desktop"
-                  sizes="(max-width: 1024px) 100vw, 65vw"
+                  sizes="(max-width: 1024px) 100vw, 62vw"
                 />
               </BrowserFrame>
-              <p className="mt-4 label-mono text-paper/55">Desktop — 1440px</p>
+              <p className="label-mono mt-4 text-dim">Desktop — 1440px</p>
             </Reveal>
 
-            <Reveal delay={160} className="lg:col-span-4 lg:justify-self-center">
-              <div className="mx-auto w-[min(15rem,70vw)]">
+            <Reveal delay={180} mode="settle" className="min-w-0 lg:col-span-4 lg:justify-self-center">
+              <div className="mx-auto w-[min(15rem,68vw)]">
                 <PhoneFrame notch={!project.cover}>
                   <ProjectPreview project={project} device="mobile" sizes="240px" />
                 </PhoneFrame>
-                <p className="mt-4 text-center label-mono text-paper/55">Mobile — 390px</p>
+                <p className="label-mono mt-4 text-center text-dim">Mobile — 390px</p>
               </div>
             </Reveal>
           </div>
@@ -276,13 +285,13 @@ export default async function CaseStudyPage({ params }: PageProps) {
       </Section>
 
       {/* Project navigation */}
-      <Section surface="paper-dim" size="tight">
+      <Section surface="void" size="tight" rule>
         <Container>
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid gap-8 sm:grid-cols-2">
             {previous ? (
               <Link href={`/work/${previous.slug}`} className="group block">
-                <p className="label-mono text-ink-900/60">Previous</p>
-                <p className="display-md mt-3 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-x-1">
+                <p className="label-mono text-dim">Previous</p>
+                <p className="display-md mt-4 text-chalk transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-x-1.5">
                   ← {previous.name}
                 </p>
               </Link>
@@ -291,8 +300,8 @@ export default async function CaseStudyPage({ params }: PageProps) {
             )}
             {next ? (
               <Link href={`/work/${next.slug}`} className="group block sm:text-right">
-                <p className="label-mono text-ink-900/60">Next</p>
-                <p className="display-md mt-3 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1">
+                <p className="label-mono text-dim">Next</p>
+                <p className="display-md mt-4 text-chalk transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1.5">
                   {next.name} →
                 </p>
               </Link>
@@ -300,14 +309,6 @@ export default async function CaseStudyPage({ params }: PageProps) {
           </div>
         </Container>
       </Section>
-
-      <CtaBand
-        eyebrow="Same treatment, your business"
-        title="We could build something like this for you."
-        body="Every project starts the same way: a conversation about what your business actually does."
-        cta={{ label: "Build My Website", href: "/contact" }}
-        secondary={{ label: "See pricing", href: "/pricing" }}
-      />
 
       <script
         type="application/ld+json"

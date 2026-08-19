@@ -17,15 +17,15 @@ export default function SiteHeader() {
   const [menuPath, setMenuPath] = useState(pathname);
 
   // Close the panel when the route changes — including on browser back/forward.
-  // Adjusting state during render is cheaper than an effect and avoids a
-  // frame where the panel is still open over the new page.
+  // Adjusting state during render avoids a frame where the panel is still open
+  // over the new page.
   if (menuOpen && pathname !== menuPath) {
     setMenuPath(pathname);
     setMenuOpen(false);
   }
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 16);
+    const onScroll = () => setScrolled(window.scrollY > 12);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -38,46 +38,52 @@ export default function SiteHeader() {
     <>
       <header
         className={cn(
-          "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500",
+          "fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color,backdrop-filter] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
           scrolled
-            ? "border-b border-ink-900/10 bg-paper/85 backdrop-blur-xl"
-            : "border-b border-transparent bg-transparent",
+            ? "border-line bg-void/72 backdrop-blur-xl backdrop-saturate-150"
+            : "border-transparent bg-transparent",
         )}
       >
-        <div className="container-bb flex h-[4.5rem] items-center justify-between gap-8">
-          <Wordmark className="text-ink-900" />
+        <div
+          className={cn(
+            "container-bb flex items-center justify-between gap-8 transition-[height] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+            scrolled ? "h-[3.75rem]" : "h-[4.75rem] lg:h-[5.5rem]",
+          )}
+        >
+          <Wordmark />
 
           <nav aria-label="Primary" className="hidden lg:block">
-            <ul className="flex items-center gap-1">
-              {primaryNav.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    aria-current={isActive(item.href) ? "page" : undefined}
-                    className={cn(
-                      "relative inline-flex h-9 items-center px-3.5 text-[0.9375rem] tracking-[-0.005em] transition-colors duration-300",
-                      isActive(item.href)
-                        ? "text-ink-900"
-                        : "text-ink-900/60 hover:text-ink-900",
-                    )}
-                  >
-                    {item.label}
-                    <span
-                      aria-hidden="true"
+            <ul className="flex items-center">
+              {primaryNav.map((item) => {
+                const active = isActive(item.href);
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={active ? "page" : undefined}
                       className={cn(
-                        "absolute inset-x-3.5 bottom-1 h-px origin-left scale-x-0 bg-brass-deep transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)]",
-                        isActive(item.href) && "scale-x-100",
+                        "group relative inline-flex h-9 items-center px-3.5 text-[0.9rem] tracking-[-0.005em] transition-colors duration-300",
+                        active ? "text-chalk" : "text-slate hover:text-chalk",
                       )}
-                    />
-                  </Link>
-                </li>
-              ))}
+                    >
+                      {item.label}
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "absolute inset-x-3.5 bottom-0.5 h-px origin-left bg-accent transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                          active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
+                        )}
+                      />
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
 
-          <div className="hidden items-center gap-3 lg:flex">
-            <ButtonLink href="/contact" variant="primary" size="md" withArrow>
-              Build My Website
+          <div className="hidden lg:block">
+            <ButtonLink href="/contact" size="md" withArrow className="label-mono h-10">
+              Start a project
             </ButtonLink>
           </div>
 
@@ -89,10 +95,9 @@ export default function SiteHeader() {
             aria-controls="mobile-menu"
             className="group -mr-2 inline-flex h-11 w-11 items-center justify-center lg:hidden"
           >
-            <span aria-hidden="true" className="flex w-6 flex-col gap-[6px]">
-              <span className="block h-px w-full bg-ink-900 transition-transform duration-300 group-hover:translate-x-0.5" />
-              <span className="block h-px w-full bg-ink-900" />
-              <span className="block h-px w-2/3 bg-ink-900 transition-all duration-300 group-hover:w-full" />
+            <span aria-hidden="true" className="flex w-6 flex-col items-end gap-[6px]">
+              <span className="block h-px w-full bg-chalk transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-2/3" />
+              <span className="block h-px w-2/3 bg-chalk transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full" />
             </span>
           </button>
         </div>

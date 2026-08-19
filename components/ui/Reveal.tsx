@@ -1,21 +1,34 @@
 "use client";
 
-import { useEffect, useRef, useState, type ElementType, type ReactNode } from "react";
+import type { ElementType, ReactNode } from "react";
+import { useInView } from "./useInView";
 import { cn } from "@/lib/utils";
+
+type Mode = "fade" | "clip" | "settle" | "rule";
+
+const modes: Record<Mode, string> = {
+  fade: "reveal",
+  clip: "reveal-clip",
+  /** Arrives at 96% and settles — used on the portfolio previews. */
+  settle: "reveal-settle",
+  /** A hairline that draws itself left to right. */
+  rule: "reveal-rule",
+};
 
 type RevealProps = {
   children: ReactNode;
   /** Milliseconds of stagger against neighbouring reveals. */
   delay?: number;
-  /** `clip` wipes content upward; `fade` lifts and fades. */
-  mode?: "fade" | "clip";
+  mode?: Mode;
   as?: ElementType;
   className?: string;
+  threshold?: number;
 };
 
 /**
- * Scroll-triggered reveal built on IntersectionObserver — no animation library.
- * Animation itself lives in CSS so `prefers-reduced-motion` disables it cleanly.
+ * Scroll-triggered reveal on IntersectionObserver — no animation library.
+ * The animation itself lives in CSS, so `prefers-reduced-motion` switches it
+ * off without any JavaScript branch.
  */
 export default function Reveal({
   children,
@@ -23,37 +36,16 @@ export default function Reveal({
   mode = "fade",
   as: Tag = "div",
   className,
+  threshold,
 }: RevealProps) {
-  const ref = useRef<HTMLElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-
-    // Anything already in view on load reveals immediately.
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setVisible(true);
-            observer.unobserve(entry.target);
-          }
-        }
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
+  const { ref, inView } = useInView<HTMLElement>({ threshold });
 
   return (
     <Tag
       ref={ref}
-      data-visible={visible ? "true" : "false"}
+      data-visible={inView ? "true" : "false"}
       style={{ "--reveal-delay": `${delay}ms` } as React.CSSProperties}
-      className={cn("reveal", mode === "clip" && "reveal-clip", className)}
+      className={cn(modes[mode], className)}
     >
       {children}
     </Tag>
