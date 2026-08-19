@@ -1,19 +1,18 @@
 import Hero from "@/sections/Hero";
-import WorkStrip from "@/sections/WorkStrip";
 import WhyBetterBuilt from "@/sections/WhyBetterBuilt";
 import Process from "@/sections/Process";
 import Pricing from "@/sections/Pricing";
 import CtaBand from "@/sections/CtaBand";
 
 /**
- * Homepage order follows the funnel: show the work, explain the offer, earn
- * trust, then reveal the price — not the other way round.
+ * Homepage order follows the funnel: the hero shows real client work, then
+ * the argument, the process, and only then the price. The full portfolio
+ * lives on /work — this page makes the case rather than listing projects.
  */
 export default function HomePage() {
   return (
     <>
       <Hero />
-      <WorkStrip />
       <WhyBetterBuilt />
       <Process withCta={false} />
       <Pricing />

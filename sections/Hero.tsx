@@ -4,20 +4,9 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Section";
 import { featuredProjects } from "@/data/projects";
 
-const industries = [
-  "Restaurants",
-  "Contractors",
-  "Home services",
-  "Salons",
-  "Fitness",
-  "Auto",
-  "Real estate",
-  "Professional services",
-];
-
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-paper pt-[7.5rem] pb-[clamp(2.5rem,4vw,3.5rem)]">
+    <section className="relative overflow-hidden bg-paper pt-[7.5rem] pb-[clamp(4rem,7vw,6.5rem)]">
       {/* Construction grid, barely there. */}
       <div
         aria-hidden="true"
@@ -77,18 +66,6 @@ export default function Hero() {
             </Reveal>
           </div>
         </div>
-
-        <Reveal delay={200}>
-          <div className="mt-[clamp(3rem,5vw,4.5rem)] border-t border-ink-900/10 pt-6">
-            <p className="label-mono text-ink-900/60">Built for</p>
-            <ul className="mt-4 flex flex-wrap gap-x-7 gap-y-2.5 text-[0.9375rem] text-ink-900/65">
-              {industries.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-              <li className="text-ink-900/60">and most things in between</li>
-            </ul>
-          </div>
-        </Reveal>
       </Container>
     </section>
   );
