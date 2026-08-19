@@ -49,17 +49,20 @@ components/
                      page transition, prose
   ui/                Button, Section/Container/Eyebrow/Ticks/TechMeta,
                      Reveal, AnimatedText, Sheen, useInView
-  visuals/           DigitalGrid + Glow, BuildAnimation, MotionBackground
+  visuals/           DigitalGrid + Glow, BuildSequence + BuildLadder +
+                     TechReadout + useBuildPhases, MotionBackground
   mockups/           Browser and phone chrome, preview scaler
   previews/          The miniature websites (one file per concept project)
   work/              Project showcase, cover renderer, status tag
   services/          The six service diagrams
   forms/             Contact form
   home/              Hero showcase, process timeline
-sections/            Composable page sections (Hero, SelectedWork, Pricing, …)
+sections/            Composable page sections (Hero, SelectedWork, UnderTheHood,
+                     Pricing, …)
 data/                Projects, services, process, pricing, FAQ copy
 lib/                 Site config, SEO helpers, utilities
 scripts/             capture-covers.mjs — screenshots live client sites
+docs/                HIGGSFIELD_PROMPTS.md — the generated-asset brief
 public/work/         Generated cover screenshots (committed)
 public/visuals/      Drop zone for generated motion assets (empty by default)
 ```
@@ -146,7 +149,9 @@ IntersectionObserver implementation to reason about.
 
 | Piece | What it does |
 | --- | --- |
-| `BuildAnimation` | **The signature.** A browser frame that constructs itself — drafting grid draws in, interface components snap into place with their labels, the wireframe dissolves into the real client site. ~1.9s, once. |
+| `BuildSequence` | **The signature.** A browser frame that constructs itself over five stages — the drafting grid rules itself, components arrive as labelled outlines, they take on type and colour, a pointer tests the primary action, breakpoints are confirmed — then the wireframe dissolves into the real client site. ~3.5s, once. |
+| `BuildLadder` / `TechReadout` | The stage words and the metadata panel either side of the frame. Both read the same clock as the sequence (`useBuildPhases`), so the stage number, component list, progress bar and breakpoint ticks are a genuine report of the animation rather than text printed beside it. There is no performance score anywhere on the site: a number nobody can verify is worth less than the page being quick in front of them. |
+| Live frame | On a pointer device, hovering a portfolio preview runs the loading hairline once and sends a cursor toward the primary action, as though the page inside were live. Pure CSS, `(hover: hover)` only, off entirely under reduced motion. |
 | `Reveal` | Scroll reveals in four modes: `fade`, `clip`, `settle` (96% → 100%, used on the previews), `rule` (a hairline drawing itself). |
 | `AnimatedText` | Per-line masked headline reveal. Lines are authored explicitly because at display size the break is a composition decision. |
 | `ProcessTimeline` | A rail that fills with scroll; each stage reports queued / active / complete. |
@@ -160,9 +165,28 @@ the three effects that would otherwise keep running a timer or a scroll handler.
 ### Generated visual assets
 
 `components/visuals/MotionBackground.tsx` is the drop-in point for a generated
-video or still, already placed in the hero. It renders nothing without a `src`,
-lazy-loads on approach, skips the download entirely under reduced motion or
-Save-Data, and falls back to its poster. See `public/visuals/README.md`.
+video or still. It renders nothing without a `src`, lazy-loads on approach,
+skips the download entirely under reduced motion or Save-Data, and falls back
+to its poster.
+
+Four slots are already placed and inert: the hero, the `/work` page header,
+Under The Hood, and the footer. `docs/HIGGSFIELD_PROMPTS.md` has the brief for
+each — purpose, prompt, negative prompt, export settings and a size budget.
+See also `public/visuals/README.md`.
+
+---
+
+## Under The Hood
+
+`sections/UnderTheHood.tsx` is four disciplines against one interface diagram
+that answers each of them: the type system highlights, component boundaries
+surface, the layout genuinely reflows from 1440px to 390px, and the loading
+strategy shows itself.
+
+Every claim in that section is true of this page, which is the only reason to
+make claims like that at all — a visitor can open dev tools and check. Nothing
+is hidden behind the interaction either: all four lists stay on the page, and
+the buttons only choose which view the diagram shows.
 
 ---
 
@@ -237,8 +261,8 @@ insert, or webhook. No component changes are needed.
 Verified in-browser after the redesign, across `/`, `/work`, `/services`,
 `/process`, `/pricing`, `/about`, `/contact` and the project pages:
 
-- **No horizontal overflow** from 375px to 1920px (checked at 375, 430, 768,
-  1024, 1440, 1920).
+- **No horizontal overflow** from 375px to 1920px (checked at 375, 390, 430,
+  768, 1024, 1440, 1920).
 - **WCAG AA contrast on every text node** — zero failures, measured against the
   actual composited background rather than assumed.
 - One `<h1>` per page and no skipped heading levels; previews are exposed as
@@ -248,4 +272,10 @@ Verified in-browser after the redesign, across `/`, `/work`, `/services`,
 - Every link and button carries an accessible name; external links declare
   `rel="noreferrer"` and announce that they open in a new tab.
 - `prefers-reduced-motion` disables every animation.
-- No animation or UI dependency: the whole redesign added **zero** packages.
+- No animation or UI dependency: **zero** packages added, before or since. The
+  build sequence, the readouts, the reflowing diagram and the live-frame hover
+  are CSS transitions and one rAF clock.
+- **No fabricated metrics anywhere.** No performance score, no client count, no
+  years in business, no testimonials. The portfolio tags are derived from each
+  project's real `scope`, so they cannot drift from what was delivered — which
+  is why the concept studies carry one tag fewer than the launched ones.

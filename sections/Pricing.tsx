@@ -29,8 +29,8 @@ function OwnershipFlow() {
           <li
             key={stage.label}
             className={cn(
-              "relative flex items-center gap-3 bg-void px-5 py-5",
-              optional && "bg-void/60",
+              "relative flex items-center gap-3 bg-card px-5 py-5",
+              optional && "opacity-70",
             )}
           >
             <span
@@ -56,9 +56,13 @@ function OwnershipFlow() {
   );
 }
 
-export default function Pricing() {
+export default function Pricing({
+  surface = "deck",
+}: {
+  surface?: "void" | "deck";
+}) {
   return (
-    <Section surface="deck" id="pricing" rule>
+    <Section surface={surface} id="pricing" rule>
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-8">
           <div>
@@ -84,7 +88,7 @@ export default function Pricing() {
           <Ticks className="mt-[clamp(2.5rem,5vw,4rem)]">
             <div
               id={websitePlan.id}
-              className="relative scroll-mt-28 overflow-hidden rounded-lg border border-line bg-void"
+              className="relative scroll-mt-28 overflow-hidden rounded-lg border border-line bg-card"
             >
               <DigitalGrid size={64} origin={{ x: "22%", y: "0%" }} className="opacity-60" />
 

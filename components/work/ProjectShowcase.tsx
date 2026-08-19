@@ -6,7 +6,7 @@ import StatusTag from "@/components/work/StatusTag";
 import Reveal from "@/components/ui/Reveal";
 import Sheen from "@/components/ui/Sheen";
 import { ExternalAction } from "@/components/ui/Button";
-import type { Project } from "@/data/projects";
+import { disciplines, type Project } from "@/data/projects";
 import { cn } from "@/lib/utils";
 
 type Layout = "left" | "right" | "full";
@@ -57,6 +57,7 @@ export default function ProjectShowcase({
           <BrowserFrame
             label={project.domain}
             status={isLive ? "Live" : "Concept"}
+            interactive
             className="relative z-[1] transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-1.5"
           >
             <ProjectPreview project={project} priority={priority} sizes={sizes} />
@@ -113,7 +114,18 @@ export default function ProjectShowcase({
           {project.summary}
         </p>
 
-        <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
+        <ul className="mt-7 flex flex-wrap items-center gap-x-2 gap-y-2">
+          {disciplines(project).map((tag) => (
+            <li
+              key={tag}
+              className="label-mono-sm rounded-[3px] border border-line px-2.5 py-1.5 text-dim transition-colors duration-400 group-hover/showcase:border-line-hard group-hover/showcase:text-slate"
+            >
+              {tag}
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-7 flex flex-wrap items-center gap-x-8 gap-y-4">
           <Link
             href={caseStudyHref}
             className="group/link label-mono inline-flex items-center gap-2.5 text-chalk"

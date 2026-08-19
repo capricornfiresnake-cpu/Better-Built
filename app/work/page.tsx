@@ -1,4 +1,5 @@
 import PageHeader from "@/components/layout/PageHeader";
+import MotionBackground from "@/components/visuals/MotionBackground";
 import ProjectShowcase from "@/components/work/ProjectShowcase";
 import Reveal from "@/components/ui/Reveal";
 import { Container, Section } from "@/components/ui/Section";
@@ -21,6 +22,9 @@ export default function WorkPage() {
   return (
     <>
       <PageHeader
+        /* Asset 2 slot — renders nothing until a file is passed.
+             src="/visuals/work-motion.mp4" poster="/visuals/work-poster.webp" */
+        backdrop={<MotionBackground opacity={0.28} overlayClassName="bg-void/70" />}
         eyebrow="Portfolio"
         lines={["Work"]}
         lede="Websites that look like the business behind them — and say so in the first two seconds."

@@ -4,6 +4,7 @@ import Wordmark from "./Wordmark";
 import AnimatedText from "@/components/ui/AnimatedText";
 import Reveal from "@/components/ui/Reveal";
 import DigitalGrid, { Glow } from "@/components/visuals/DigitalGrid";
+import MotionBackground from "@/components/visuals/MotionBackground";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container, TechMeta } from "@/components/ui/Section";
 import { footerNav, legalNav, site } from "@/lib/site";
@@ -13,6 +14,9 @@ export default function SiteFooter() {
 
   return (
     <footer className="sheet relative overflow-hidden border-t border-line bg-void">
+      {/* Asset 5 slot — build → deploy → live. Inert without a src. */}
+      <MotionBackground opacity={0.25} overlayClassName="bg-void/75" />
+
       <DigitalGrid size={88} origin={{ x: "18%", y: "10%" }} className="opacity-60" />
       {/* One of the two places on the site where the accent is allowed to glow. */}
       <Glow className="-left-40 -top-52 h-[34rem] w-[34rem] opacity-45" />

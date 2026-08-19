@@ -7,14 +7,6 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Section";
 import { featuredProjects } from "@/data/projects";
 
-/** The four stages of a build. A real sequence, so it is numbered. */
-const ladder = [
-  { step: "01", label: "Structure" },
-  { step: "02", label: "Design" },
-  { step: "03", label: "Build" },
-  { step: "04", label: "Launch" },
-];
-
 export default function Hero() {
   return (
     <section className="sheet relative overflow-hidden bg-void pt-[clamp(6.5rem,12vw,9rem)] pb-[clamp(4rem,8vw,7rem)]">
@@ -94,26 +86,9 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* The build ladder. Four stages, in order, because they happen in order. */}
+        {/* The build environment: stage ladder, the frame under construction,
+            and the readout reporting it. All three share one clock. */}
         <div className="mt-[clamp(3rem,6vw,5rem)]">
-          <Reveal mode="rule" delay={100}>
-            <span className="block h-px w-full bg-line" />
-          </Reveal>
-          <ul className="grid grid-cols-2 sm:grid-cols-4">
-            {ladder.map((item, i) => (
-              <li key={item.step} className="border-b border-line-soft sm:border-b-0">
-                <Reveal delay={200 + i * 70}>
-                  <div className="flex items-baseline gap-3 py-4">
-                    <span className="label-mono-sm text-accent-lift">{item.step}</span>
-                    <span className="label-mono text-slate">{item.label}</span>
-                  </div>
-                </Reveal>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="mt-[clamp(2.5rem,5vw,4rem)]">
           <HeroShowcase projects={featuredProjects} />
         </div>
       </Container>

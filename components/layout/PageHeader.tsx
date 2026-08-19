@@ -17,6 +17,7 @@ export default function PageHeader({
   lede,
   meta,
   aside,
+  backdrop,
   className,
 }: {
   eyebrow: string;
@@ -25,6 +26,8 @@ export default function PageHeader({
   lede?: ReactNode;
   meta?: (string | { label: string; value: string })[];
   aside?: ReactNode;
+  /** Slot for a generated motion asset. See docs/HIGGSFIELD_PROMPTS.md. */
+  backdrop?: ReactNode;
   className?: string;
 }) {
   return (
@@ -35,6 +38,7 @@ export default function PageHeader({
         className,
       )}
     >
+      {backdrop}
       <DigitalGrid size={80} origin={{ x: "72%", y: "0%" }} className="opacity-70" />
 
       <Container className="relative">

@@ -9,28 +9,39 @@ export { default as ScaledPreview } from "./ScaledPreview";
  * `label` is the address in the URL bar — concept projects use a plainly
  * fictional domain. The frame is the site's recurring container: a real
  * website, shown as a real website, never as a floating rectangle.
+ *
+ * `progress` draws the loading hairline under the chrome, and `interactive`
+ * lets the frame respond to a hover on its enclosing `.group` as though the
+ * page inside it were live.
  */
 export function BrowserFrame({
   children,
   label,
   className,
   status,
+  progress,
+  interactive = false,
 }: {
   children: ReactNode;
   label: string;
   className?: string;
   /** Small mono note at the right of the chrome, e.g. "LIVE". */
   status?: string;
+  /** 0–1. The hairline retracts once it reaches 1. */
+  progress?: number;
+  interactive?: boolean;
 }) {
+  const loading = typeof progress === "number" && progress < 1;
+
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-xl bg-card ring-1 ring-line",
+        "relative overflow-hidden rounded-xl bg-card ring-1 ring-line",
         "shadow-[0_2px_6px_rgb(0_0_0/0.4),0_30px_80px_-24px_rgb(0_0_0/0.8)]",
         className,
       )}
     >
-      <div className="flex h-9 items-center gap-3 border-b border-line-soft px-3.5">
+      <div className="relative flex h-9 items-center gap-3 border-b border-line-soft px-3.5">
         <span aria-hidden="true" className="flex gap-[5px]">
           {[0, 1, 2].map((i) => (
             <span key={i} className="block h-[7px] w-[7px] rounded-full bg-white/12" />
@@ -55,8 +66,46 @@ export function BrowserFrame({
             {status}
           </span>
         ) : null}
+
+        {/* Loading hairline, driven by the build sequence. */}
+        {typeof progress === "number" ? (
+          <span
+            aria-hidden="true"
+            className="absolute inset-x-0 bottom-0 h-px origin-left bg-accent transition-[transform,opacity] duration-300 ease-linear"
+            style={{
+              transform: `scaleX(${Math.min(1, Math.max(0, progress))})`,
+              opacity: loading ? 1 : 0,
+            }}
+          />
+        ) : null}
+
+        {/* On hover, the same hairline runs once — the page reloading. */}
+        {interactive ? (
+          <span
+            aria-hidden="true"
+            className="frame-sweep absolute inset-x-0 bottom-0 h-px origin-left bg-accent"
+          />
+        ) : null}
       </div>
-      <div className="bg-white">{children}</div>
+
+      <div className="relative bg-white">
+        {children}
+
+        {interactive ? (
+          <span aria-hidden="true" className="frame-pointer">
+            <svg viewBox="0 0 12 14" className="h-4 w-3.5">
+              <path
+                d="M1 1l9.2 6.6-4 .5-1.1 4.2z"
+                fill="#F2F0EA"
+                stroke="#08090B"
+                strokeWidth="0.9"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="frame-pointer-ring" />
+          </span>
+        ) : null}
+      </div>
     </div>
   );
 }

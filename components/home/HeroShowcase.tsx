@@ -4,7 +4,11 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { BrowserFrame, PhoneFrame } from "@/components/mockups/Frames";
-import BuildAnimation from "@/components/visuals/BuildAnimation";
+import BuildSequence from "@/components/visuals/BuildSequence";
+import BuildLadder from "@/components/visuals/BuildLadder";
+import TechReadout from "@/components/visuals/TechReadout";
+import { useBuildPhases } from "@/components/visuals/useBuildPhases";
+import { AT } from "@/components/visuals/useBuildPhases";
 import ProjectPreview from "@/components/work/ProjectPreview";
 import { PREVIEW_DESKTOP, PREVIEW_MOBILE } from "@/components/previews/registry";
 import type { Project } from "@/data/projects";
@@ -13,19 +17,23 @@ import { cn } from "@/lib/utils";
 const CYCLE_MS = 6000;
 
 /**
- * The hero object: a browser frame that builds itself and resolves into real
- * client work, then cycles through the rest of it.
+ * The hero's build environment: the stage ladder, a browser frame that
+ * constructs a website and resolves into real client work, and the readout
+ * reporting what the frame is doing.
  *
- * The previews are the finished websites, so the hero is a demonstration
- * rather than an illustration of one.
+ * All three read from one clock (`useBuildPhases`), so the metadata is a
+ * genuine report of the animation rather than text printed beside it. Once the
+ * build lands, the frame cycles through the live client sites.
  */
 export default function HeroShowcase({ projects }: { projects: Project[] }) {
+  const { ref, phase, progress, done } = useBuildPhases();
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const phoneRef = useRef<HTMLDivElement>(null);
 
+  // The carousel only starts once there is a finished website to cycle.
   useEffect(() => {
-    if (paused) return;
+    if (!done || paused) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     // Pausing is driven by hover, which touch devices never fire. Rotating
@@ -39,7 +47,7 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
       CYCLE_MS,
     );
     return () => window.clearInterval(id);
-  }, [paused, projects.length]);
+  }, [done, paused, projects.length]);
 
   // Light parallax on the phone. Capped, rAF-throttled, motion-safe.
   useEffect(() => {
@@ -66,85 +74,109 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
   }, []);
 
   const current = projects[active];
+  const launched = phase >= AT.launch;
 
   return (
     <div
-      className="relative"
+      ref={ref}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
-      <Link
-        href={`/work/${current.slug}`}
-        aria-label={`${current.name} — ${current.category}. See the project.`}
-        className="block rounded-xl focus-visible:outline-offset-4"
-      >
-        <BrowserFrame label={current.domain} status={current.liveUrl ? "Live" : "Concept"}>
-          <BuildAnimation trigger="view">
-            <div
-              className="relative overflow-hidden"
-              style={{
-                aspectRatio: `${PREVIEW_DESKTOP.width} / ${PREVIEW_DESKTOP.height}`,
-              }}
-            >
-              {projects.map((project, i) => (
-                <div
-                  key={project.slug}
-                  aria-hidden={i !== active}
-                  className={cn(
-                    "absolute inset-0 transition-opacity duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
-                    i === active ? "opacity-100" : "opacity-0",
-                  )}
-                >
-                  <ProjectPreview
-                    project={project}
-                    device="desktop"
-                    priority={i === 0}
-                    sizes="(max-width: 1024px) 100vw, 62vw"
-                  />
-                </div>
-              ))}
-            </div>
-          </BuildAnimation>
-        </BrowserFrame>
-      </Link>
+      <BuildLadder phase={phase} />
 
-      {/* The mobile design, hung off the lower-left corner. Hidden on phones,
-          where it would cover a quarter of an already-small preview — the
-          mobile view gets a full-size showing on the project page. */}
-      <div
-        ref={phoneRef}
-        className="absolute -bottom-14 left-4 hidden w-[17%] max-w-[132px] will-change-transform sm:block lg:-bottom-16 lg:-left-12"
-      >
-        <PhoneFrame notch={!current.cover}>
-          <div
-            className="relative overflow-hidden"
-            style={{
-              aspectRatio: `${PREVIEW_MOBILE.width} / ${PREVIEW_MOBILE.height}`,
-            }}
+      <div className="mt-[clamp(2rem,4vw,3rem)] grid gap-6 lg:grid-cols-12 lg:gap-8">
+        <div className="relative min-w-0 lg:col-span-9">
+          <Link
+            href={`/work/${current.slug}`}
+            aria-label={`${current.name} — ${current.category}. See the project.`}
+            className="block rounded-xl focus-visible:outline-offset-4"
           >
-            {projects.map((project, i) => (
+            <BrowserFrame
+              label={launched ? current.domain : "localhost:3000"}
+              status={launched ? (current.liveUrl ? "Live" : "Concept") : "Building"}
+              progress={done ? 1 : progress}
+            >
+              <BuildSequence phase={phase}>
+                <div
+                  className="relative overflow-hidden"
+                  style={{
+                    aspectRatio: `${PREVIEW_DESKTOP.width} / ${PREVIEW_DESKTOP.height}`,
+                  }}
+                >
+                  {projects.map((project, i) => (
+                    <div
+                      key={project.slug}
+                      aria-hidden={i !== active}
+                      className={cn(
+                        "absolute inset-0 transition-opacity duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+                        i === active ? "opacity-100" : "opacity-0",
+                      )}
+                    >
+                      <ProjectPreview
+                        project={project}
+                        device="desktop"
+                        priority={i === 0}
+                        sizes="(max-width: 1024px) 100vw, 55vw"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </BuildSequence>
+            </BrowserFrame>
+          </Link>
+
+          {/* The mobile design, hung off the lower-left corner. Hidden on
+              phones, where it would cover a quarter of an already-small
+              preview — the mobile view gets a full showing on the project
+              page. It arrives with the finished site, not before it. */}
+          <div
+            ref={phoneRef}
+            className={cn(
+              "absolute -bottom-12 left-4 hidden w-[17%] max-w-[124px] will-change-transform sm:block",
+              "transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
+              launched ? "opacity-100" : "opacity-0",
+            )}
+          >
+            <PhoneFrame notch={!current.cover}>
               <div
-                key={project.slug}
-                aria-hidden={i !== active}
-                className={cn(
-                  "absolute inset-0 transition-opacity duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
-                  i === active ? "opacity-100" : "opacity-0",
-                )}
+                className="relative overflow-hidden"
+                style={{
+                  aspectRatio: `${PREVIEW_MOBILE.width} / ${PREVIEW_MOBILE.height}`,
+                }}
               >
-                <ProjectPreview project={project} device="mobile" sizes="160px" />
+                {projects.map((project, i) => (
+                  <div
+                    key={project.slug}
+                    aria-hidden={i !== active}
+                    className={cn(
+                      "absolute inset-0 transition-opacity duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+                      i === active ? "opacity-100" : "opacity-0",
+                    )}
+                  >
+                    <ProjectPreview project={project} device="mobile" sizes="150px" />
+                  </div>
+                ))}
               </div>
-            ))}
+            </PhoneFrame>
           </div>
-        </PhoneFrame>
+        </div>
+
+        <TechReadout phase={phase} progress={progress} className="lg:col-span-3" />
       </div>
 
       {/* Caption. The spacer keeps it clear of the phone on wide screens. */}
-      <div className="mt-8 flex flex-wrap items-end justify-between gap-x-8 gap-y-5 border-t border-line-soft pt-5 sm:mt-16">
-        <span aria-hidden="true" className="hidden w-[13%] max-w-[110px] shrink-0 sm:block" />
+      <div className="mt-8 flex flex-wrap items-end justify-between gap-x-8 gap-y-5 border-t border-line-soft pt-5 sm:mt-14">
+        <span aria-hidden="true" className="hidden w-[12%] max-w-[104px] shrink-0 sm:block" />
 
-        <div aria-live="polite" className="min-w-0 flex-1">
+        <div
+          aria-live="polite"
+          className={cn(
+            "min-w-0 flex-1 transition-opacity duration-700",
+            launched ? "opacity-100" : "opacity-0",
+          )}
+        >
           <p className="label-mono-sm flex flex-wrap items-center gap-x-3 gap-y-1 text-dim">
             <span className={current.status === "client" ? "text-accent-lift" : undefined}>
               {current.status === "client" ? "Client" : "Concept"}

@@ -422,68 +422,89 @@
 }
 
 /* ============================================================
-   THE BUILD SEQUENCE
-   The signature: a browser frame that constructs itself, then
-   dissolves into the real client site. Runs once, ~1.8s.
+   LIVE FRAME
+   A portfolio preview answers a hover the way the real page
+   would: the loading hairline runs once and a pointer crosses
+   the screen toward the primary action. Pointer devices only —
+   there is no hover on a phone, and nothing here is required
+   to understand the preview.
    ============================================================ */
 
-@keyframes bb-draw-x {
-  from {
+.frame-pointer,
+.frame-sweep {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .frame-pointer {
+    display: block;
+    position: absolute;
+    left: 74%;
+    top: 74%;
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0;
+    filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.35));
+    transition:
+      left 900ms var(--ease-out-expo) 140ms,
+      top 900ms var(--ease-out-expo) 140ms,
+      opacity 320ms linear;
+  }
+
+  .group:hover .frame-pointer,
+  .group:focus-within .frame-pointer {
+    left: 21%;
+    top: 29%;
+    opacity: 1;
+  }
+
+  .frame-pointer-ring {
+    position: absolute;
+    left: -9px;
+    top: -9px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--color-accent);
+    opacity: 0;
+  }
+
+  .group:hover .frame-pointer-ring {
+    animation: bb-ping 820ms var(--ease-out-expo) 940ms both;
+  }
+
+  .frame-sweep {
+    display: block;
     transform: scaleX(0);
+    opacity: 0;
+  }
+
+  .group:hover .frame-sweep {
+    animation: bb-load 880ms var(--ease-out-expo) both;
+  }
+}
+
+@keyframes bb-ping {
+  from {
+    transform: scale(0.4);
+    opacity: 0.85;
   }
   to {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+@keyframes bb-load {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  78% {
+    opacity: 1;
+  }
+  100% {
     transform: scaleX(1);
-  }
-}
-
-@keyframes bb-draw-y {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
-}
-
-@keyframes bb-snap {
-  0% {
-    opacity: 0;
-    transform: translateY(6px) scale(0.985);
-  }
-  100% {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes bb-fade-out {
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes bb-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes bb-sweep {
-  0% {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  12% {
-    opacity: 1;
-  }
-  88% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(200%);
     opacity: 0;
   }
 }
@@ -623,5 +644,10 @@
 
   .page-in {
     animation: none;
+  }
+
+  .frame-pointer,
+  .frame-sweep {
+    display: none;
   }
 }

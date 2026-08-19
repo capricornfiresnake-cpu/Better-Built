@@ -345,3 +345,22 @@ export function previewLabel(project: Project, device: "desktop" | "mobile") {
   const kind = project.status === "concept" ? "Concept website design" : "Website";
   return `${kind} for ${project.name}, ${project.category} — ${device} view`;
 }
+
+/**
+ * The disciplines a project actually involved, derived from its `scope` rather
+ * than asserted separately — so the tags can never drift from what was really
+ * delivered. Concept studies were never launched, and their tag list says so
+ * by being one shorter.
+ */
+export function disciplines(project: Project): string[] {
+  const scope = project.scope.join(" ").toLowerCase();
+  const tags: string[] = [];
+
+  if (scope.includes("design")) tags.push("Design");
+  if (scope.includes("build")) tags.push("Development");
+  if (scope.includes("mobile")) tags.push("Mobile");
+  if (scope.includes("seo")) tags.push("SEO");
+  if (scope.includes("launch")) tags.push("Launch");
+
+  return tags;
+}
