@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Azeret_Mono, Instrument_Sans, Newsreader } from "next/font/google";
+import { Azeret_Mono, Fraunces, Karla, Newsreader } from "next/font/google";
 import "./globals.css";
 
 import SiteHeader from "@/components/layout/SiteHeader";
@@ -7,18 +7,24 @@ import SiteFooter from "@/components/layout/SiteFooter";
 import { organizationSchema } from "@/lib/seo";
 import { site } from "@/lib/site";
 
-/* Display face — the variable width axis is what gives headlines their
-   engineered, slightly-expanded stance. */
-const archivo = Archivo({
+/* Display face. Fraunces is a variable serif with two axes almost nobody
+   touches: WONK swaps in the designer's deliberately irregular letterforms,
+   and SOFT rounds the terminals. Both are dialled up here — a business whose
+   clients are hand-painted bar signs and surf shacks should not speak in a
+   neutral grotesque. */
+const fraunces = Fraunces({
   subsets: ["latin"],
-  axes: ["wdth"],
-  variable: "--font-archivo",
+  axes: ["SOFT", "WONK", "opsz"],
+  variable: "--font-fraunces",
   display: "swap",
 });
 
-const instrument = Instrument_Sans({
+/* Body and UI. Karla is a grotesque with genuinely odd details — a splayed
+   'k', a curled 'l', an open 'a' — that stay invisible at reading size but
+   keep the page from feeling machine-set. Quiet where it needs to be. */
+const karla = Karla({
   subsets: ["latin"],
-  variable: "--font-instrument",
+  variable: "--font-karla",
   display: "swap",
 });
 
@@ -78,10 +84,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${archivo.variable} ${instrument.variable} ${azeret.variable} ${newsreader.variable} antialiased`}
-      >
+    <html lang="en" className={`${fraunces.variable} ${karla.variable} ${azeret.variable} ${newsreader.variable}`}>
+      <body className="antialiased">
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-none focus:bg-ink-900 focus:px-5 focus:py-3 focus:text-paper focus:label-mono"

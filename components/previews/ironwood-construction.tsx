@@ -5,8 +5,8 @@ import { Plate, PreviewRoot } from "./kit";
 const graphite = "#101211";
 const steel = "#c9ccd1";
 const amber = "#e0a324";
-const display = "var(--font-archivo), sans-serif";
-const sans = "var(--font-instrument), system-ui, sans-serif";
+const display = "var(--font-karla), sans-serif";
+const sans = "var(--font-karla), system-ui, sans-serif";
 const mono = "var(--font-azeret), ui-monospace, monospace";
 
 export function Desktop() {

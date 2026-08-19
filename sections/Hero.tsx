@@ -17,7 +17,7 @@ const industries = [
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-paper pt-[7.5rem] pb-[clamp(5rem,9vw,8rem)]">
+    <section className="relative overflow-hidden bg-paper pt-[7.5rem] pb-[clamp(2.5rem,4vw,3.5rem)]">
       {/* Construction grid, barely there. */}
       <div
         aria-hidden="true"
@@ -79,7 +79,7 @@ export default function Hero() {
         </div>
 
         <Reveal delay={200}>
-          <div className="mt-[clamp(4.5rem,8vw,7rem)] border-t border-ink-900/10 pt-6">
+          <div className="mt-[clamp(3rem,5vw,4.5rem)] border-t border-ink-900/10 pt-6">
             <p className="label-mono text-ink-900/60">Built for</p>
             <ul className="mt-4 flex flex-wrap gap-x-7 gap-y-2.5 text-[0.9375rem] text-ink-900/65">
               {industries.map((item) => (

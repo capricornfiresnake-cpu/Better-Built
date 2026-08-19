@@ -41,7 +41,6 @@ export default function Wordmark({
       <BuildMark className={cn("text-brass-deep", markClassName)} />
       <span
         className="font-display text-[0.9375rem] font-bold uppercase leading-none tracking-[0.16em]"
-        style={{ fontVariationSettings: '"wdth" 105' }}
       >
         {site.wordmark}
       </span>

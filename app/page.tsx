@@ -1,6 +1,5 @@
 import Hero from "@/sections/Hero";
 import WorkStrip from "@/sections/WorkStrip";
-import Services from "@/sections/Services";
 import WhyBetterBuilt from "@/sections/WhyBetterBuilt";
 import Process from "@/sections/Process";
 import Pricing from "@/sections/Pricing";
@@ -15,7 +14,6 @@ export default function HomePage() {
     <>
       <Hero />
       <WorkStrip />
-      <Services />
       <WhyBetterBuilt />
       <Process withCta={false} />
       <Pricing />

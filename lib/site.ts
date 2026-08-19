@@ -38,17 +38,6 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
     ],
   },
   {
-    title: "Services",
-    links: [
-      { label: "Custom website design", href: "/services#design" },
-      { label: "Mobile-first development", href: "/services#mobile" },
-      { label: "Conversion-focused design", href: "/services#conversion" },
-      { label: "SEO foundations", href: "/services#seo" },
-      { label: "Launch", href: "/services#launch" },
-      { label: "Ongoing updates", href: "/services#updates" },
-    ],
-  },
-  {
     title: "Pricing",
     links: [
       { label: "Website — $800", href: "/pricing#website" },

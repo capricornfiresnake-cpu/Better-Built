@@ -6,8 +6,8 @@ const white = "#ffffff";
 const ink = "#12212b";
 const blue = "#1668a8";
 const wash = "#eef4f8";
-const display = "var(--font-archivo), sans-serif";
-const sans = "var(--font-instrument), system-ui, sans-serif";
+const display = "var(--font-karla), sans-serif";
+const sans = "var(--font-karla), system-ui, sans-serif";
 
 const services = [
   ["Emergency repairs", "Burst pipes, leaks, no hot water."],

@@ -6,7 +6,7 @@ const ink = "#14120f";
 const cream = "#f3ece0";
 const gold = "#c08a3e";
 const serif = "var(--font-newsreader), Georgia, serif";
-const sans = "var(--font-instrument), system-ui, sans-serif";
+const sans = "var(--font-karla), system-ui, sans-serif";
 
 const nav = ["Menus", "Private Dining", "The Cellar", "Our Story"];
 

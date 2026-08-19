@@ -15,7 +15,11 @@ export default function WorkStrip() {
   const showsClientWork = shown.some((project) => project.status === "client");
 
   return (
-    <Section surface="paper-dim" id="work">
+    <Section
+      surface="paper-dim"
+      id="work"
+      className="pt-[clamp(3rem,5vw,4.5rem)] pb-[clamp(3.5rem,6vw,5.5rem)]"
+    >
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-8">
           <Reveal>

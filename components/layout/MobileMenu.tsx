@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 
 import Wordmark from "./Wordmark";
-import { ButtonLink } from "@/components/ui/Button";
 import { legalNav, primaryNav, site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -111,17 +110,7 @@ export default function MobileMenu({
       </nav>
 
       <div className="container-bb shrink-0 pb-10 pt-8">
-        <ButtonLink
-          href="/contact"
-          tone="dark"
-          size="lg"
-          withArrow
-          className="w-full"
-          onClick={onClose}
-        >
-          Build My Website
-        </ButtonLink>
-        <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2 label-mono text-paper/55">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 label-mono text-paper/55">
           <a href={`mailto:${site.email}`} className="link-underline">
             {site.email}
           </a>
