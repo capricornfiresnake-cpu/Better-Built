@@ -74,12 +74,7 @@ export default function SiteFooter() {
         </div>
 
         <div className="flex flex-col gap-5 border-t border-line-soft py-8 sm:flex-row sm:items-center sm:justify-between">
-          <TechMeta
-            items={[
-              `© ${year} ${site.name}`,
-              { label: "Built with", value: "Next.js" },
-            ]}
-          />
+          <TechMeta items={[`© ${year} ${site.name}`]} />
           <ul className="flex gap-6">
             {legalNav.map((link) => (
               <li key={link.href}>

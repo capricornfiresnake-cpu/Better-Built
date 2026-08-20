@@ -17,8 +17,6 @@ export const metadata = pageMeta({
 const layouts = ["left", "right", "full", "left", "right"] as const;
 
 export default function WorkPage() {
-  const live = projects.filter((project) => project.liveUrl).length;
-
   return (
     <>
       <PageHeader
@@ -27,12 +25,7 @@ export default function WorkPage() {
         backdrop={<MotionBackground opacity={0.28} overlayClassName="bg-void/70" />}
         eyebrow="Portfolio"
         lines={["Work"]}
-        lede="Websites that look like the business behind them — and say so in the first two seconds."
-        meta={[
-          { label: "Projects", value: String(projects.length) },
-          { label: "Live client sites", value: String(live) },
-          { label: "Design studies", value: String(projects.length - live) },
-        ]}
+        lede="Each one designed around what the business actually sells, and who actually buys it."
       />
 
       <Section surface="void" size="tight">

@@ -111,7 +111,7 @@ export default function TechReadout({
         </div>
       </div>
 
-      <div className="border-t border-line-soft pt-4">
+      <div className="mt-auto border-t border-line-soft pt-4">
         <p className="label-mono-sm text-dim">Responsive</p>
         <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
           {["Mobile", "Tablet", "Desktop"].map((size) => (
@@ -130,12 +130,6 @@ export default function TechReadout({
         </ul>
       </div>
 
-      <div className="mt-auto border-t border-line-soft pt-4">
-        <p className="label-mono-sm text-dim">Built with</p>
-        <p className="mt-3 font-mono text-[10px] leading-relaxed tracking-[0.08em] text-slate">
-          Next.js · React · TypeScript
-        </p>
-      </div>
     </aside>
   );
 }

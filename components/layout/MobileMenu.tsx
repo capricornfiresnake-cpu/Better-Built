@@ -11,8 +11,8 @@ import { cn } from "@/lib/utils";
 
 /**
  * The menu is the site's table of contents, so it is set like one: every route
- * numbered, ruled, and given the full width of the screen. Designed for the
- * phone rather than folded down from the desktop nav.
+ * ruled off and given the full width of the screen. Designed for the phone
+ * rather than folded down from the desktop nav.
  */
 export default function MobileMenu({
   open,
@@ -116,13 +116,10 @@ export default function MobileMenu({
                 onClick={onClose}
                 style={{ transitionDelay: open ? `${140 + i * 55}ms` : "0ms" }}
                 className={cn(
-                  "group flex items-baseline gap-5 py-[3vh] transition-[opacity,transform] duration-600 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                  "group flex items-baseline gap-4 py-[3vh] transition-[opacity,transform] duration-600 ease-[cubic-bezier(0.16,1,0.3,1)]",
                   open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
                 )}
               >
-                <span className="label-mono-sm w-6 shrink-0 text-accent-lift">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
                 <span className="display-lg text-chalk">{item.label}</span>
                 <span
                   aria-hidden="true"
