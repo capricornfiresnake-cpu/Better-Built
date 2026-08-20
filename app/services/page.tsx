@@ -1,5 +1,5 @@
 import PageHeader from "@/components/layout/PageHeader";
-import ServiceVisual from "@/components/services/ServiceVisual";
+import ServiceTransformation from "@/components/services/ServiceTransformation";
 import Reveal from "@/components/ui/Reveal";
 import { Container, Section } from "@/components/ui/Section";
 import Process from "@/sections/Process";
@@ -82,7 +82,7 @@ export default function ServicesPage() {
                     delay={80}
                     className={cn("lg:col-span-6", flip && "lg:order-1")}
                   >
-                    <ServiceVisual id={service.id} />
+                    <ServiceTransformation id={service.id} name={service.title} />
                   </Reveal>
                 </article>
               );
