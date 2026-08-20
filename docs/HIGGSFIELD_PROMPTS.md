@@ -11,6 +11,44 @@ is arguing against.
 
 ---
 
+## Findings from the first run (2026-08-19)
+
+Two images generated, 4 credits, **neither shipped**. What it taught us:
+
+**Video needs a paid plan.** On `free`, every Kling mode is refused —
+`std` returns *"Requires basic plan or higher"*, `pro` *"Requires plus plan or
+higher"*. Crucially, **`get_cost` still returns a price for models you cannot
+run**, so a successful cost preflight is not proof of access. Image generation
+works fine on `free` at 2 credits.
+
+**Turn sound off.** It is most of the cost of a video and every asset here is
+muted anyway: Kling 3.0 at 5s/16:9 was 10 credits with audio, **7.5 without**
+(`std`) or 8.75 (`pro`). Always pass `sound: "off"`.
+
+**Prompt language that misfires.** "Studio void", "dolly", "edge-lit",
+"shallow depth of field" all read as *photograph of a room* — the first attempt
+came back as a neon-indigo perspective box with floor, ceiling and converging
+wall grids, brass-coloured panel edges, and a blurred blob of pseudo-furniture.
+Textbook AI-render. The language that fixed it: *"flat orthographic technical
+elevation, camera perfectly perpendicular, no perspective, no vanishing point,
+no floor, no ceiling, no walls, no depth"*, plus naming the wrong colours
+explicitly (*"absolutely not gold, not tan, not brass"*) and *"nothing glows,
+no bloom, no gradients, no shadows, no 3D"*.
+
+**The finding that matters: Asset 1 is the wrong brief.** Attempt 2 followed
+the corrected prompt exactly and came back clean — flat, black, bone-white
+hairline rectangles on a faint grid. It is also, almost line for line, what
+`BuildSequence` already draws in CSS, animated, in the exact brand colours, at
+zero bytes. Putting it behind the hero adds a second static wireframe behind
+the real animated one: noise, not depth.
+
+**So: do not generate a wireframe backdrop for the hero.** The generated assets
+worth paying for are the ones CSS genuinely cannot do — real camera movement,
+depth of field, material and light. That is Asset 2, not Asset 1. If budget
+only covers one, make it Asset 2, and leave the hero to the build sequence.
+
+---
+
 ## House style — apply to every prompt
 
 Paste this into every generation, and keep it identical across all five so the
@@ -43,7 +81,7 @@ set reads as one shoot:
 | **Where** | `sections/Hero.tsx`, the `<MotionBackground />` already at the top of the section. |
 | **Aspect ratio** | 16:9 |
 | **Duration** | 6–8s, seamless loop |
-| **Priority** | Highest. This is the one that changes first impressions. |
+| **Priority** | **Superseded — see Findings above.** Tried, and the corrected output duplicates what BuildSequence already draws. Skip unless the brief changes to something with real camera movement. |
 
 **Prompt**
 
