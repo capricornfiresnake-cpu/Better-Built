@@ -33,14 +33,8 @@ export type ServiceMedia = {
 };
 
 export const serviceMedia: Record<string, ServiceMedia> = {
-  design: {
-    src: "/videos/services/custom-website-design.mp4",
-    srcMobile: "/videos/services/custom-website-design.mobile.mp4",
-    poster: "/videos/services/custom-website-design.webp",
-    accent: "#d08a2c",
-    caption: "Dated homepage → premium editorial site",
-    alt: "A cramped, dated grey restaurant homepage rebuilding itself into a modern one: a large warm photograph of a candlelit dining room, generous whitespace, and a clear amber booking button.",
-  },
+  // Empty on purpose. Every service renders its hand-drawn CSS diagram until a
+  // video is good enough to earn the slot.
 };
 
 export function getServiceMedia(id: string): ServiceMedia | undefined {
