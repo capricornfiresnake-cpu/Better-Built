@@ -22,9 +22,13 @@ const outcomes = [
   },
 ];
 
-export default function WhyBetterBuilt() {
+export default function WhyBetterBuilt({
+  surface = "void",
+}: {
+  surface?: "void" | "deck";
+}) {
   return (
-    <Section surface="void" id="why" rule>
+    <Section surface={surface} id="why" rule>
       <Container>
         <div className="grid gap-x-14 gap-y-10 lg:grid-cols-12">
           <div className="lg:col-span-6">
