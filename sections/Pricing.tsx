@@ -58,8 +58,12 @@ function OwnershipFlow() {
 
 export default function Pricing({
   surface = "deck",
+  showSupport = true,
 }: {
   surface?: "void" | "deck";
+  /** The homepage states the one-time price and stops there; /pricing carries
+      the ongoing plans. */
+  showSupport?: boolean;
 }) {
   return (
     <Section surface={surface} id="pricing" rule>
@@ -168,80 +172,84 @@ export default function Pricing({
           </Ticks>
         </Reveal>
 
-        {/* Optional support */}
-        <div className="mt-[clamp(2.5rem,5vw,4rem)]">
-          <Reveal>
-            <p className="label-mono text-dim">Optional, after launch</p>
-          </Reveal>
-
-          <div className="mt-6 grid gap-5 md:grid-cols-2">
-            {supportPlans.map((plan, i) => (
-              <Reveal key={plan.id} delay={i * 80}>
-                <div
-                  id={plan.id}
-                  className={cn(
-                    "group flex h-full scroll-mt-28 flex-col rounded-lg border bg-card p-[clamp(1.5rem,3vw,2.25rem)]",
-                    "transition-colors duration-500",
-                    plan.highlight
-                      ? "border-accent/35 hover:border-accent/60"
-                      : "border-line hover:border-line-hard",
-                  )}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="display-md text-chalk">{plan.name}</h3>
-                    {plan.highlight ? (
-                      <span className="label-mono-sm shrink-0 rounded-[3px] border border-accent/40 px-2.5 py-1.5 text-accent-lift">
-                        {plan.highlight}
-                      </span>
-                    ) : null}
+        {/* Optional support. The homepage states the one-time price and stops
+            there; /pricing is where the ongoing plans belong. */}
+        {showSupport ? (
+          <div className="mt-[clamp(2.5rem,5vw,4rem)]">
+            <Reveal>
+              <p className="label-mono text-dim">Optional, after launch</p>
+            </Reveal>
+  
+            <div className="mt-6 grid gap-5 md:grid-cols-2">
+              {supportPlans.map((plan, i) => (
+                <Reveal key={plan.id} delay={i * 80}>
+                  <div
+                    id={plan.id}
+                    className={cn(
+                      "group flex h-full scroll-mt-28 flex-col rounded-lg border bg-card p-[clamp(1.5rem,3vw,2.25rem)]",
+                      "transition-colors duration-500",
+                      plan.highlight
+                        ? "border-accent/35 hover:border-accent/60"
+                        : "border-line hover:border-line-hard",
+                    )}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="display-md text-chalk">{plan.name}</h3>
+                      {plan.highlight ? (
+                        <span className="label-mono-sm shrink-0 rounded-[3px] border border-accent/40 px-2.5 py-1.5 text-accent-lift">
+                          {plan.highlight}
+                        </span>
+                      ) : null}
+                    </div>
+  
+                    <div className="mt-6 flex items-baseline gap-2.5">
+                      <span className="numeral text-[2.75rem] text-chalk">{plan.price}</span>
+                      <span className="text-[0.9375rem] text-slate">{plan.cadence}</span>
+                      {plan.note ? (
+                        <span className="label-mono-sm text-dim">{plan.note}</span>
+                      ) : null}
+                    </div>
+  
+                    <p className="mt-5 max-w-[40ch] text-[0.9375rem] leading-relaxed text-slate">
+                      {plan.description}
+                    </p>
+  
+                    <ul className="mt-6 space-y-2.5 text-[0.9375rem] text-slate">
+                      {plan.includes.map((item) => (
+                        <li key={item} className="flex gap-3">
+                          <span
+                            aria-hidden="true"
+                            className="mt-[0.62em] h-px w-3 shrink-0 bg-accent"
+                          />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+  
+                    <div className="mt-auto pt-8">
+                      <ButtonLink
+                        href={plan.cta.href}
+                        variant="secondary"
+                        withArrow
+                        className="label-mono"
+                      >
+                        {plan.cta.label}
+                      </ButtonLink>
+                    </div>
                   </div>
-
-                  <div className="mt-6 flex items-baseline gap-2.5">
-                    <span className="numeral text-[2.75rem] text-chalk">{plan.price}</span>
-                    <span className="text-[0.9375rem] text-slate">{plan.cadence}</span>
-                    {plan.note ? (
-                      <span className="label-mono-sm text-dim">{plan.note}</span>
-                    ) : null}
-                  </div>
-
-                  <p className="mt-5 max-w-[40ch] text-[0.9375rem] leading-relaxed text-slate">
-                    {plan.description}
-                  </p>
-
-                  <ul className="mt-6 space-y-2.5 text-[0.9375rem] text-slate">
-                    {plan.includes.map((item) => (
-                      <li key={item} className="flex gap-3">
-                        <span
-                          aria-hidden="true"
-                          className="mt-[0.62em] h-px w-3 shrink-0 bg-accent"
-                        />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="mt-auto pt-8">
-                    <ButtonLink
-                      href={plan.cta.href}
-                      variant="secondary"
-                      withArrow
-                      className="label-mono"
-                    >
-                      {plan.cta.label}
-                    </ButtonLink>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
+                </Reveal>
+              ))}
+            </div>
+  
+            <Reveal delay={120}>
+              <p className="mt-7 max-w-[54ch] text-[0.875rem] leading-relaxed text-dim">
+                Support plans are optional. The website is yours either way, and you can
+                start or stop ongoing updates at any point.
+              </p>
+            </Reveal>
           </div>
+        ) : null}
 
-          <Reveal delay={120}>
-            <p className="mt-7 max-w-[54ch] text-[0.875rem] leading-relaxed text-dim">
-              Support plans are optional. The website is yours either way, and you can
-              start or stop ongoing updates at any point.
-            </p>
-          </Reveal>
-        </div>
       </Container>
     </Section>
   );

@@ -98,7 +98,7 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
           >
             <BrowserFrame
               label={launched ? current.domain : "localhost:3000"}
-              status={launched ? (current.liveUrl ? "Live" : "Concept") : "Building"}
+              status={launched && current.liveUrl ? "Live" : launched ? undefined : "Building"}
               progress={load}
             >
               <BuildSequence phase={phase}>
@@ -180,13 +180,7 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
             launched ? "opacity-100" : "opacity-0",
           )}
         >
-          <p className="label-mono-sm flex flex-wrap items-center gap-x-3 gap-y-1 text-dim">
-            <span className={current.status === "client" ? "text-accent-lift" : undefined}>
-              {current.status === "client" ? "Client" : "Concept"}
-            </span>
-            <span aria-hidden="true" className="h-px w-4 bg-line-hard" />
-            {current.industry}
-          </p>
+          <p className="label-mono-sm text-dim">{current.industry}</p>
           <p className="mt-3 text-[1.05rem] text-slate">
             <Link
               href={`/work/${current.slug}`}

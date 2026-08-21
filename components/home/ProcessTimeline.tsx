@@ -9,9 +9,9 @@ import { cn } from "@/lib/utils";
  * The build timeline.
  *
  * A rail fills as the section passes the viewport and each stage reports its
- * own state — queued, active, complete — the way a build pipeline would. The
- * numbering is real information here: these steps happen in this order, and
- * the status of one depends on the one before it.
+ * own state — queued, active, complete — the way a build pipeline would.
+ * The order is the information: the status of one stage depends on the one
+ * before it.
  */
 export default function ProcessTimeline({ tone = "void" }: { tone?: "void" | "deck" }) {
   const containerRef = useRef<HTMLOListElement>(null);
@@ -89,7 +89,7 @@ export default function ProcessTimeline({ tone = "void" }: { tone?: "void" | "de
             <li
               key={step.title}
               className={cn(
-                "relative grid gap-y-4 border-b border-line py-[clamp(2rem,4vw,3.25rem)] last:border-b-0",
+                "relative grid gap-y-4 border-b border-line py-[clamp(2rem,4vw,3.25rem)] last:border-b-0 last:pb-0",
                 "sm:pl-8",
                 "lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-x-12",
               )}

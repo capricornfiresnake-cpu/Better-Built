@@ -25,7 +25,7 @@ export default function HomePage() {
       <WhyBetterBuilt surface="deck" />
       <Services />
       <UnderTheHood surface="deck" />
-      <Pricing surface="void" />
+      <Pricing surface="void" showSupport={false} />
     </>
   );
 }

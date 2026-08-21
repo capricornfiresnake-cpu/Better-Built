@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 
 import { BrowserFrame, PhoneFrame } from "@/components/mockups/Frames";
 import ProjectPreview from "@/components/work/ProjectPreview";
-import StatusTag from "@/components/work/StatusTag";
 import AnimatedText from "@/components/ui/AnimatedText";
 import Reveal from "@/components/ui/Reveal";
 import Sheen from "@/components/ui/Sheen";
@@ -34,7 +33,7 @@ export async function generateMetadata({ params }: PageProps) {
 
   return pageMeta({
     title: `${project.name} — ${project.category}`,
-    description: `${project.objective} A ${project.status === "concept" ? "concept" : "client"} website design by Better Built.`,
+    description: `${project.objective} A website designed and built by Better Built.`,
     path: `/work/${project.slug}`,
   });
 }
@@ -60,7 +59,6 @@ export default async function CaseStudyPage({ params }: PageProps) {
               </Link>
               <span aria-hidden="true" className="h-px w-8 bg-line-hard" />
               <span className="label-mono text-dim">{project.industry}</span>
-              <StatusTag project={project} />
             </div>
           </Reveal>
 
@@ -124,7 +122,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
                   </span>
                 </a>
               ) : (
-                <BrowserFrame label={project.domain} status="Concept">
+                <BrowserFrame label={project.domain}>
                   <ProjectPreview
                     project={project}
                     device="desktop"
@@ -195,9 +193,9 @@ export default async function CaseStudyPage({ params }: PageProps) {
               <p className="label-mono text-dim">Status</p>
               <div className="mt-6 border-t border-line-soft pt-3">
                 <p className="text-[0.9375rem] leading-relaxed text-slate">
-                  {project.status === "concept"
-                    ? "Concept study by Better Built. Not a client engagement."
-                    : "Client project, designed and built by Better Built. Live now."}
+                  {project.liveUrl
+                    ? "Designed and built by Better Built. Live now."
+                    : "Designed and built by Better Built."}
                 </p>
               </div>
               {project.liveUrl ? (

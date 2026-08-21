@@ -5,11 +5,13 @@ import { faqs } from "@/data/services";
 /** Native `details`/`summary` — keyboard accessible without a line of JS. */
 export default function Faq({
   surface = "void",
+  className,
 }: {
   surface?: "void" | "deck";
+  className?: string;
 }) {
   return (
-    <Section surface={surface} id="faq" rule>
+    <Section surface={surface} id="faq" rule className={className}>
       <Container>
         <div className="grid gap-x-14 gap-y-10 lg:grid-cols-12">
           <Reveal className="lg:col-span-4">

@@ -42,10 +42,10 @@ export default function TermsPage() {
 
             <h2>Portfolio work</h2>
             <p>
-              Projects shown on this website that are marked as concept work are
-              Better Built&rsquo;s own design studies. They are not client
-              engagements, and the businesses shown in them are fictional. Any
-              resemblance to a real business is unintended.
+              Designs shown on this website remain the property of Better Built
+              and the businesses they were made for. Business names and details
+              appearing inside portfolio screenshots are used to illustrate the
+              design and are not an offer or endorsement.
             </p>
 
             <h2>Pricing shown here</h2>

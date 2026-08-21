@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import { BrowserFrame } from "@/components/mockups/Frames";
 import ProjectPreview from "@/components/work/ProjectPreview";
-import StatusTag from "@/components/work/StatusTag";
 import Reveal from "@/components/ui/Reveal";
 import Sheen from "@/components/ui/Sheen";
 import { ExternalAction } from "@/components/ui/Button";
@@ -15,9 +14,8 @@ type Layout = "left" | "right" | "full";
  * A project, shown at the size it deserves.
  *
  * The preview is the argument, so it gets the space: a real browser frame
- * around a real screenshot (client work) or a real rendered layout (concept
- * work). The three layouts alternate down the page so a portfolio of five
- * never settles into a rhythm.
+ * around a real screenshot, or a layout rendered in code where there is no
+ * screenshot to take.
  */
 export default function ProjectShowcase({
   project,
@@ -52,7 +50,7 @@ export default function ProjectShowcase({
         >
           <BrowserFrame
             label={project.domain}
-            status={isLive ? "Live" : "Concept"}
+            status={isLive ? "Live" : undefined}
             interactive
             className="relative z-[1] transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-1.5"
           >
@@ -90,11 +88,6 @@ export default function ProjectShowcase({
       className={cn("min-w-0", full ? "grid gap-x-12 gap-y-8 lg:grid-cols-12" : "lg:col-span-5")}
     >
       <Reveal delay={140} className={cn(full && "lg:col-span-5")}>
-        <div className="flex items-center gap-4">
-          <StatusTag project={project} />
-          <span aria-hidden="true" className="h-px flex-1 bg-line-soft" />
-        </div>
-
         <Heading className="display-lg mt-6 text-chalk">
           <Link href={caseStudyHref} className="transition-colors hover:text-accent-lift">
             {project.name}

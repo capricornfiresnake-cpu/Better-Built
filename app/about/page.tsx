@@ -145,11 +145,9 @@ export default function AboutPage() {
                   </div>
                   <div className="lg:col-span-7">
                     <p className="max-w-[52ch] text-[1.0625rem] leading-relaxed text-slate">
-                      No invented client list, no borrowed statistics, no awards we
-                      didn&rsquo;t win, and no testimonials we wrote ourselves. There are
-                      five projects on this site: two live client builds and three design
-                      studies, each labelled as exactly what it is. Look at the portfolio
-                      and judge the craft — that is the only claim we&rsquo;re making.
+                      No borrowed statistics, no awards we didn&rsquo;t win, and no
+                      testimonials we wrote ourselves. Look at the portfolio and judge
+                      the craft — that is the only claim we&rsquo;re making.
                     </p>
                     <div className="mt-8">
                       <ButtonLink href="/work" variant="secondary" withArrow className="label-mono">

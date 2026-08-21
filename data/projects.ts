@@ -342,8 +342,7 @@ export function adjacentProjects(slug: string) {
  * websites, so they need a description the way a photograph would.
  */
 export function previewLabel(project: Project, device: "desktop" | "mobile") {
-  const kind = project.status === "concept" ? "Concept website design" : "Website";
-  return `${kind} for ${project.name}, ${project.category} — ${device} view`;
+  return `Website for ${project.name}, ${project.category} — ${device} view`;
 }
 
 /**

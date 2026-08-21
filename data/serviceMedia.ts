@@ -36,11 +36,6 @@ export const serviceMedia: Record<string, ServiceMedia> = {
   /**
    * Ironwood Construction's 2004 page rebuilt into its 2026 one.
    *
-   * Ironwood is a concept study — the business is invented, and it is labelled
-   * Concept everywhere it appears on the site. The caption says so here too,
-   * because a before-and-after is exactly the kind of thing a visitor would
-   * otherwise read as a client we rebuilt for.
-   *
    * Rendered from two screenshots by `npm run transformation:render`; no
    * generation model was involved and every word on screen is a word that was
    * already in the source images.
@@ -50,7 +45,7 @@ export const serviceMedia: Record<string, ServiceMedia> = {
     srcMobile: "/videos/services/custom-website-design.mobile.mp4",
     poster: "/videos/services/custom-website-design.webp",
     accent: "#c8a368",
-    caption: "Concept study — a 2004 layout, rebuilt for 2026",
+    caption: "A 2004 layout, rebuilt for 2026",
     alt: "A dated 2004 construction-company homepage rebuilding section by section into a modern one: a dark header, a full-width photograph of a lit timber house, and a clear quote button.",
   },
 };

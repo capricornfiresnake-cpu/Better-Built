@@ -58,7 +58,7 @@ export default function ProcessPage() {
 
       <Process withCta={false} />
 
-      <Section surface="deck" rule>
+      <Section surface="deck" rule className="pt-[clamp(2rem,4vw,3.5rem)]">
         <Container>
           <Reveal>
             <Eyebrow>What to expect</Eyebrow>
@@ -95,7 +95,7 @@ export default function ProcessPage() {
         </Container>
       </Section>
 
-      <Faq surface="void" />
+      <Faq surface="void" className="pt-[clamp(2rem,4vw,3.5rem)]" />
     </>
   );
 }
