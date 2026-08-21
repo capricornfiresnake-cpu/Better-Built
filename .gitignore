@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# intermediate frames from the transformation render
+scripts/transformation/.frames/

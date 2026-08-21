@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Better Built — website transformation preview</title>
+<style>
+  :root {
+    --void: #08090b;
+    --accent: #6c63ff;
+    --chalk: #f2f0ea;
+    --slate: #9a9ca3;
+    --line: rgb(255 255 255 / 0.1);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: #101216;
+    color: var(--chalk);
+    font: 13px/1.5 ui-monospace, "SF Mono", Menlo, monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 24px;
+  }
+
+  /* ---- The composition. Exactly what the renderer captures. ---- */
+
+  .bb-stage {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    background: var(--void);
+    overflow: hidden;
+    transform-origin: top left;
+  }
+
+  .bb-sheet {
+    position: absolute;
+    inset: 0;
+  }
+
+  .bb-layer {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    will-change: clip-path, transform, filter;
+  }
+
+  .bb-new { z-index: 2; }
+
+  /* Whole-pixel placement, natural size, no scaling: the held frames are the
+     screenshots themselves rather than resampled copies of them. */
+  .bb-layer img {
+    position: absolute;
+    user-select: none;
+    image-rendering: auto;
+  }
+
+  /* The straight edge the rebuild travels behind. */
+  .bb-edge {
+    position: absolute;
+    z-index: 3;
+    width: 2px;
+    margin-left: -1px;
+    background: var(--accent);
+    box-shadow: 0 0 14px 1px rgb(108 99 255 / 0.55);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Drafting grid, only while the page is in pieces. */
+  .bb-grid {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    opacity: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgb(108 99 255 / 0.16) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(108 99 255 / 0.16) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  }
+
+  .bb-scan {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    z-index: 4;
+    opacity: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgb(108 99 255 / 0.15) 22%,
+      rgb(108 99 255 / 0.9) 50%,
+      rgb(108 99 255 / 0.15) 78%,
+      transparent
+    );
+  }
+
+  /* ---- Preview chrome. Never rendered. ---- */
+
+  #shell {
+    width: 1280px;
+    max-width: 100%;
+  }
+
+  #frame {
+    position: relative;
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+  }
+
+  #frame .bb-stage { transform: scale(0.6667); }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 1280px;
+    max-width: 100%;
+  }
+
+  button {
+    font: inherit;
+    color: var(--chalk);
+    background: #15171c;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 7px 14px;
+    cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); }
+
+  input[type=range] { flex: 1; accent-color: var(--accent); }
+
+  .t { color: var(--slate); min-width: 118px; }
+  .t b { color: var(--accent); font-weight: 500; }
+
+  .marks {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    color: var(--slate);
+  }
+  .marks button { padding: 5px 10px; font-size: 12px; }
+
+  .note {
+    width: 1280px;
+    max-width: 100%;
+    color: var(--slate);
+    line-height: 1.7;
+  }
+  .note b { color: var(--chalk); font-weight: 500; }
+</style>
+</head>
+<body>
+  <div id="shell">
+    <div id="frame"><div id="stage"></div></div>
+
+    <div class="row" style="margin-top:14px">
+      <button id="play">Pause</button>
+      <input id="scrub" type="range" min="0" max="1000" value="0">
+      <span class="t"><b id="secs">0.00</b>s / 5.00s</span>
+    </div>
+
+    <div class="row marks" style="margin-top:10px">
+      <span>jump:</span>
+      <button data-t="0">0.0 old held</button>
+      <button data-t="0.19">0.95 last still frame</button>
+      <button data-t="0.25">1.25 rebuild starts</button>
+      <button data-t="0.42">2.10 mid</button>
+      <button data-t="0.60">3.00 resolving</button>
+      <button data-t="0.755">3.78 last moving frame</button>
+      <button data-t="0.80">4.00 new held</button>
+      <button data-t="1">5.00 end</button>
+    </div>
+
+    <p class="note" style="margin-top:16px">
+      <b>0.00–1.00s</b> the 2004 page, untouched and still &nbsp;·&nbsp;
+      <b>1.00–3.80s</b> rebuilt band by band along the page's own section
+      boundaries &nbsp;·&nbsp; <b>3.80–5.00s</b> the 2026 page, untouched and
+      still.<br>
+      Both endpoints are the supplied screenshots at native height — the
+      animation only clips, moves and fades them. Nothing is redrawn and no
+      text is generated.
+    </p>
+  </div>
+
+<script src="bands.js"></script>
+<script src="animation.js"></script>
+<script>
+(function () {
+  const anim = BBTransformation.create(document.getElementById("stage"), window.BB_BANDS);
+
+  const scrub = document.getElementById("scrub");
+  const secs = document.getElementById("secs");
+  const play = document.getElementById("play");
+
+  const DURATION = 5000;
+  let playing = true;
+  let origin = performance.now();
+
+  function show(t) {
+    anim.seek(t);
+    secs.textContent = (t * 5).toFixed(2);
+    scrub.value = Math.round(t * 1000);
+  }
+
+  function loop(now) {
+    if (playing) show((((now - origin) % DURATION) / DURATION));
+    requestAnimationFrame(loop);
+  }
+
+  scrub.addEventListener("input", () => {
+    playing = false;
+    play.textContent = "Play";
+    show(scrub.value / 1000);
+  });
+
+  play.addEventListener("click", () => {
+    playing = !playing;
+    play.textContent = playing ? "Pause" : "Play";
+    if (playing) origin = performance.now() - (scrub.value / 1000) * DURATION;
+  });
+
+  document.querySelectorAll(".marks button").forEach((b) =>
+    b.addEventListener("click", () => {
+      playing = false;
+      play.textContent = "Play";
+      show(parseFloat(b.dataset.t));
+    }),
+  );
+
+  show(0);
+  requestAnimationFrame(loop);
+
+  // The renderer drives this directly, one frame at a time. It must stop the
+  // playback loop first, or rAF overwrites each seek before the frame is
+  // captured and every screenshot lands on wall-clock time instead.
+  window.__pause = () => {
+    playing = false;
+    play.textContent = "Play";
+  };
+  window.__seek = (t) => anim.seek(t);
+  window.__ready = true;
+})();
+</script>
+</body>
+</html>
