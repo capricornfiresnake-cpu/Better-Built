@@ -2,21 +2,21 @@ import Hero from "@/sections/Hero";
 import WhyBetterBuilt from "@/sections/WhyBetterBuilt";
 import Services from "@/sections/Services";
 import UnderTheHood from "@/sections/UnderTheHood";
-import Process from "@/sections/Process";
 import Pricing from "@/sections/Pricing";
 
 /**
  * The homepage argues in the order a business owner decides in: watch us build
  * one (the hero), hear why it matters, what is included, what it is made of,
- * how it runs, and only then the price.
+ * and then the price.
  *
- * The portfolio lives on /work. The hero cycles the live client sites and
- * carries the link to the rest, which is enough of it for this page — the
- * argument does not need the whole catalogue inlined into it.
+ * The portfolio and the process both have their own pages, linked from the
+ * hero, the nav and the footer. This page makes the case; it does not inline
+ * the whole site into itself.
  *
- * Surfaces alternate void / deck the whole way down, so each section reads as
- * its own sheet rather than one long scroll. The closing ask lives in the
- * footer, which every page shares.
+ * Surfaces alternate void / deck down the page so each section reads as its
+ * own sheet. Pricing lands on void against the void footer, which is fine —
+ * the footer carries its own top rule and glow. The closing ask lives there,
+ * shared by every page.
  */
 export default function HomePage() {
   return (
@@ -25,8 +25,7 @@ export default function HomePage() {
       <WhyBetterBuilt surface="deck" />
       <Services />
       <UnderTheHood surface="deck" />
-      <Process withCta={false} />
-      <Pricing surface="deck" />
+      <Pricing surface="void" />
     </>
   );
 }
