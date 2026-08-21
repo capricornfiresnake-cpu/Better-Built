@@ -26,7 +26,10 @@ const CYCLE_MS = 6000;
  * build lands, the frame cycles through the live client sites.
  */
 export default function HeroShowcase({ projects }: { projects: Project[] }) {
-  const { ref, phase, progress, load, done } = useBuildPhases();
+  // The hero is the first thing on the page; it should not wait to be
+  // scrolled to, and waiting for an intersection callback means waiting for
+  // hydration.
+  const { ref, phase, progress, load, done } = useBuildPhases({ start: "mount" });
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const phoneRef = useRef<HTMLDivElement>(null);

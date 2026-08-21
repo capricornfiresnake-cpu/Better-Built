@@ -12,11 +12,11 @@ import { useInView } from "@/components/ui/useInView";
  * genuine report of the animation rather than decoration printed beside it.
  */
 export const PHASES = [
-  { key: "build", label: "Build", ms: 780 },
-  { key: "design", label: "Design", ms: 720 },
-  { key: "motion", label: "Motion", ms: 640 },
-  { key: "optimize", label: "Optimize", ms: 640 },
-  { key: "launch", label: "Launch", ms: 760 },
+  { key: "build", label: "Build", ms: 620 },
+  { key: "design", label: "Design", ms: 580 },
+  { key: "motion", label: "Motion", ms: 500 },
+  { key: "optimize", label: "Optimize", ms: 500 },
+  { key: "launch", label: "Launch", ms: 700 },
 ] as const;
 
 export type PhaseKey = (typeof PHASES)[number]["key"];
@@ -35,20 +35,32 @@ export const DONE = PHASES.length;
 
 const TOTAL = PHASES.reduce((sum, phase) => sum + phase.ms, 0);
 
-/**
- * Runs the sequence once, when it first scrolls into view.
- *
- * Reduced motion lands on the finished state immediately: the completed
- * website, every readout at 100%, no assembly. One rAF loop that stops itself
- * after ~3.5s and never restarts.
- */
 /** Everything before LAUNCH: the bar is full by the time the site is revealed. */
 const LOAD_END =
   PHASES.slice(0, AT.launch).reduce((sum, phase) => sum + phase.ms, 0) / TOTAL;
 
 const easeOut = (x: number) => 1 - Math.pow(1 - x, 3);
 
-export function useBuildPhases() {
+/**
+ * Runs the sequence once, either on mount or when it is scrolled to.
+ *
+ * Reduced motion lands on the finished state immediately: the completed
+ * website, every readout at 100%, no assembly. One rAF loop that stops itself
+ * after ~3.5s and never restarts.
+ */
+export function useBuildPhases({
+  start: startMode = "view",
+}: {
+  /**
+   * `view` waits until the frame is scrolled to. `mount` begins immediately,
+   * which is right for the hero: it is the first thing on the page, and
+   * waiting costs about two seconds of nothing happening. Intersection
+   * callbacks do not fire until hydration is done — every observer on the page
+   * reports at once, around 2s in — so an above-the-fold animation that waits
+   * for one is really waiting for hydration.
+   */
+  start?: "view" | "mount";
+} = {}) {
   const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.25 });
   const [phase, setPhase] = useState(-1);
   const [progress, setProgress] = useState(0);
@@ -92,7 +104,8 @@ export function useBuildPhases() {
 
     const tick = (now: number) => {
       if (!start) {
-        if (!inViewRef.current && now < armAt) {
+        const go = startMode === "mount" || inViewRef.current || now >= armAt;
+        if (!go) {
           frame = requestAnimationFrame(tick);
           return;
         }
@@ -118,7 +131,7 @@ export function useBuildPhases() {
 
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, []);
+  }, [startMode]);
 
   return {
     ref,
