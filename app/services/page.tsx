@@ -2,7 +2,6 @@ import PageHeader from "@/components/layout/PageHeader";
 import ServiceTransformation from "@/components/services/ServiceTransformation";
 import Reveal from "@/components/ui/Reveal";
 import { Container, Section } from "@/components/ui/Section";
-import Process from "@/sections/Process";
 import { services } from "@/data/services";
 import { pageMeta } from "@/lib/seo";
 import { cn } from "@/lib/utils";
@@ -28,7 +27,7 @@ export default function ServicesPage() {
         ]}
       />
 
-      <Section surface="void" size="tight">
+      <Section surface="deck" size="tight">
         <Container>
           <div className="border-t border-line">
             {services.map((service, i) => {
@@ -90,8 +89,6 @@ export default function ServicesPage() {
           </div>
         </Container>
       </Section>
-
-      <Process withCta surface="deck" />
     </>
   );
 }
