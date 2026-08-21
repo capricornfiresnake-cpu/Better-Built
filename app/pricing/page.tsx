@@ -43,7 +43,7 @@ export default function PricingPage() {
 
       <Pricing />
 
-      <Section surface="void" rule>
+      <Section surface="void" rule className="pb-[clamp(2rem,4vw,3.5rem)]">
         <Container>
           <div className="grid gap-x-14 gap-y-10 lg:grid-cols-12">
             <Reveal className="lg:col-span-4">
@@ -73,7 +73,7 @@ export default function PricingPage() {
         </Container>
       </Section>
 
-      <Faq surface="deck" />
+      <Faq surface="deck" className="pt-[clamp(2rem,4vw,3.5rem)]" />
     </>
   );
 }
