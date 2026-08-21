@@ -42,39 +42,63 @@ const TOTAL = PHASES.reduce((sum, phase) => sum + phase.ms, 0);
  * website, every readout at 100%, no assembly. One rAF loop that stops itself
  * after ~3.5s and never restarts.
  */
+/** Everything before LAUNCH: the bar is full by the time the site is revealed. */
+const LOAD_END =
+  PHASES.slice(0, AT.launch).reduce((sum, phase) => sum + phase.ms, 0) / TOTAL;
+
+const easeOut = (x: number) => 1 - Math.pow(1 - x, 3);
+
 export function useBuildPhases() {
   const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.25 });
   const [phase, setPhase] = useState(-1);
   const [progress, setProgress] = useState(0);
-  const [armed, setArmed] = useState(false);
-  const frame = useRef(0);
+
+  // Mirrored into a ref so the clock below can read it without depending on
+  // it, and therefore without ever being torn down and restarted.
+  const inViewRef = useRef(false);
+  useEffect(() => {
+    inViewRef.current = inView;
+  }, [inView]);
 
   /**
-   * The finished website is hidden until the sequence reaches LAUNCH, so the
-   * sequence must not be able to simply never happen. If it has not started
-   * within a couple of seconds — an observer that never fired, a browser that
-   * doesn't report intersections — it starts anyway. The animation is the
+   * One clock, started exactly once, never restarted.
+   *
+   * This deliberately does not depend on `inView`. An earlier version did, and
+   * also on a piece of state set by the fallback timer below — so when that
+   * timer fired two seconds in, React tore the effect down, cancelled the frame
+   * and re-ran it with a fresh `start`. The sequence jumped back to the
+   * beginning every single load, which read as the progress bar sliding
+   * backwards. The trigger is read through a ref instead, so nothing here is
+   * ever torn down until the component unmounts.
+   *
+   * The fallback matters because the finished website stays hidden until
+   * LAUNCH: if the observer never reports (a browser that doesn't, a tab that
+   * never composites), the sequence has to start anyway. The animation is the
    * decoration; the client's website underneath it is the content.
    */
   useEffect(() => {
-    const id = setTimeout(() => setArmed(true), 2200);
-    return () => clearTimeout(id);
-  }, []);
-
-  useEffect(() => {
-    if (!inView && !armed) return;
+    let frame = 0;
+    let start = 0;
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      frame.current = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => {
         setPhase(DONE);
         setProgress(1);
       });
-      return () => cancelAnimationFrame(frame.current);
+      return () => cancelAnimationFrame(frame);
     }
 
-    const start = performance.now();
+    const armAt = performance.now() + 2200;
 
     const tick = (now: number) => {
+      if (!start) {
+        if (!inViewRef.current && now < armAt) {
+          frame = requestAnimationFrame(tick);
+          return;
+        }
+        start = now;
+      }
+
       const elapsed = now - start;
       setProgress(Math.min(1, elapsed / TOTAL));
 
@@ -89,20 +113,24 @@ export function useBuildPhases() {
       }
       setPhase(current);
 
-      if (elapsed < TOTAL) {
-        frame.current = requestAnimationFrame(tick);
-      }
+      if (elapsed < TOTAL) frame = requestAnimationFrame(tick);
     };
 
-    frame.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame.current);
-  }, [inView, armed]);
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, []);
 
   return {
     ref,
     /** -1 before the sequence starts, 0–4 while running, 5 when finished. */
     phase,
     progress,
+    /**
+     * The address-bar loading hairline: fills quickly, decelerates, and is
+     * exactly full at the moment the site is revealed — so it reads as the
+     * page having loaded rather than as a meter of the animation.
+     */
+    load: easeOut(Math.min(1, progress / LOAD_END)),
     started: phase >= 0,
     done: phase >= DONE,
   };

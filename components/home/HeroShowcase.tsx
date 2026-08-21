@@ -26,7 +26,7 @@ const CYCLE_MS = 6000;
  * build lands, the frame cycles through the live client sites.
  */
 export default function HeroShowcase({ projects }: { projects: Project[] }) {
-  const { ref, phase, progress, done } = useBuildPhases();
+  const { ref, phase, progress, load, done } = useBuildPhases();
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const phoneRef = useRef<HTMLDivElement>(null);
@@ -96,7 +96,7 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
             <BrowserFrame
               label={launched ? current.domain : "localhost:3000"}
               status={launched ? (current.liveUrl ? "Live" : "Concept") : "Building"}
-              progress={done ? 1 : progress}
+              progress={load}
             >
               <BuildSequence phase={phase}>
                 <div

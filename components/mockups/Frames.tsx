@@ -67,11 +67,16 @@ export function BrowserFrame({
           </span>
         ) : null}
 
-        {/* Loading hairline, driven by the build sequence. */}
+        {/* Loading hairline, driven by the build sequence.
+
+            No transition on the transform: the value already arrives once per
+            animation frame, and transitioning it means every frame starts a
+            fresh tween from wherever the last one had got to, which reads as
+            stutter. Only the fade out is transitioned. */}
         {typeof progress === "number" ? (
           <span
             aria-hidden="true"
-            className="absolute inset-x-0 bottom-0 h-px origin-left bg-accent transition-[transform,opacity] duration-300 ease-linear"
+            className="absolute inset-x-0 bottom-0 h-px origin-left bg-accent transition-opacity duration-500 ease-out"
             style={{
               transform: `scaleX(${Math.min(1, Math.max(0, progress))})`,
               opacity: loading ? 1 : 0,
