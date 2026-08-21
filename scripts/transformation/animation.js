@@ -23,12 +23,24 @@
   const STAGE_H = 1080;
   const PAGE_H = 970; // native height of both sources; avoids resampling
 
-  /* Timeline, in fractions of the five seconds. */
-  const HOLD_OLD = 0.2; // 0.0–1.0s  the old site, dead still
-  const FIRST_BAND = 0.2; // 1.0s     the rebuild starts
-  const LAST_BAND = 0.58; // 2.9s     the final band begins
-  const BAND_DUR = 0.18; // 0.9s      one band's rebuild
-  const HOLD_NEW = LAST_BAND + BAND_DUR; // 0.76 → 3.8s, the new site, dead still
+  /**
+   * Total running time. The rebuild itself accounts for 2.8s of it; the rest
+   * is the two held frames, kept deliberately short.
+   *
+   * This loops on a card, where a full second of a motionless old page at the
+   * top reads as the video having stalled. The cascade covers for the short
+   * holds either way: for the first second only the top band is moving, so the
+   * old page is still plainly legible, and the new one is all but complete
+   * well before the final hold begins.
+   */
+  const DURATION_S = 3.2;
+
+  /* Timeline, in fractions of the running time. */
+  const HOLD_OLD = 0.031; // 0.00–0.10s   the old site, still
+  const FIRST_BAND = 0.031; // 0.10s      the rebuild starts
+  const LAST_BAND = 0.625; // 2.00s       the final band begins
+  const BAND_DUR = 0.281; // 0.90s        one band, start to finish
+  const HOLD_NEW = LAST_BAND + BAND_DUR; // 0.906 → 2.90s, the new site, still
 
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const easeInOut = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
@@ -196,5 +208,13 @@
     return { seek, parts };
   }
 
-  global.BBTransformation = { create, STAGE_W, STAGE_H, PAGE_H, HOLD_OLD, HOLD_NEW };
+  global.BBTransformation = {
+    create,
+    DURATION_S,
+    STAGE_W,
+    STAGE_H,
+    PAGE_H,
+    HOLD_OLD,
+    HOLD_NEW,
+  };
 })(typeof window !== "undefined" ? window : globalThis);

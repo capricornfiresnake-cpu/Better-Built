@@ -26,8 +26,6 @@ const FRAME_DIR = join(HERE, ".frames");
 const WIDTH = 1920;
 const HEIGHT = 1080;
 const FPS = 30;
-const SECONDS = 5;
-const FRAMES = FPS * SECONDS;
 
 const NAME = "custom-website-transformation";
 
@@ -51,6 +49,9 @@ async function main() {
     args: ["--force-device-scale-factor=1", "--hide-scrollbars", "--disable-lcd-text"],
   });
 
+  // Set from the composition once the page is up; the encoders need it too.
+  let frameCount = 0;
+
   try {
     const page = await browser.newPage();
     await page.setViewport({ width: WIDTH, height: HEIGHT, deviceScaleFactor: 1 });
@@ -58,6 +59,10 @@ async function main() {
       waitUntil: "networkidle0",
     });
     await page.waitForFunction("window.__ready === true");
+
+    // The composition owns its own running time, so retiming it is one edit.
+    const seconds = await page.evaluate(() => window.BBTransformation.DURATION_S);
+    frameCount = Math.round(FPS * seconds);
 
     // Stop the preview's own playback before stepping frames by hand.
     await page.evaluate(() => window.__pause());
@@ -79,9 +84,9 @@ async function main() {
       "Array.from(document.images).every((i) => i.complete && i.naturalWidth > 0)",
     );
 
-    process.stdout.write(`rendering ${FRAMES} frames `);
-    for (let i = 0; i < FRAMES; i++) {
-      await page.evaluate((t) => window.__seek(t), i / (FRAMES - 1));
+    process.stdout.write(`rendering ${frameCount} frames at ${FPS}fps `);
+    for (let i = 0; i < frameCount; i++) {
+      await page.evaluate((t) => window.__seek(t), i / (frameCount - 1));
       await page.screenshot({
         path: join(FRAME_DIR, `f${String(i).padStart(4, "0")}.png`),
         clip: { x: 0, y: 0, width: WIDTH, height: HEIGHT },
@@ -95,6 +100,7 @@ async function main() {
   }
 
   const pattern = join(FRAME_DIR, "f%04d.png");
+  const lastFrame = frameCount - 1;
 
   console.log("encoding mp4 …");
   ffmpeg([
@@ -115,7 +121,7 @@ async function main() {
 
   console.log("poster …");
   ffmpeg([
-    "-i", join(FRAME_DIR, `f${String(FRAMES - 1).padStart(4, "0")}.png`),
+    "-i", join(FRAME_DIR, `f${String(lastFrame).padStart(4, "0")}.png`),
     "-vf", "scale=960:-2", "-c:v", "libwebp", "-quality", "82",
     join(OUT_DIR, `${NAME}.webp`),
   ]);

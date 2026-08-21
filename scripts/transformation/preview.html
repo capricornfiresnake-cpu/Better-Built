@@ -170,19 +170,19 @@
     <div class="row" style="margin-top:14px">
       <button id="play">Pause</button>
       <input id="scrub" type="range" min="0" max="1000" value="0">
-      <span class="t"><b id="secs">0.00</b>s / 5.00s</span>
+      <span class="t"><b id="secs">0.00</b>s / <span id="total">0.00</span>s</span>
     </div>
 
     <div class="row marks" style="margin-top:10px">
       <span>jump:</span>
-      <button data-t="0">0.0 old held</button>
-      <button data-t="0.19">0.95 last still frame</button>
-      <button data-t="0.25">1.25 rebuild starts</button>
-      <button data-t="0.42">2.10 mid</button>
-      <button data-t="0.60">3.00 resolving</button>
-      <button data-t="0.755">3.78 last moving frame</button>
-      <button data-t="0.80">4.00 new held</button>
-      <button data-t="1">5.00 end</button>
+      <button data-t="0" data-label="old held"></button>
+      <button data-t="0.03" data-label="last still frame"></button>
+      <button data-t="0.10" data-label="rebuild starts"></button>
+      <button data-t="0.45" data-label="mid"></button>
+      <button data-t="0.70" data-label="resolving"></button>
+      <button data-t="0.90" data-label="last moving frame"></button>
+      <button data-t="0.93" data-label="new held"></button>
+      <button data-t="1" data-label="end"></button>
     </div>
 
     <p class="note" style="margin-top:16px">
@@ -206,13 +206,15 @@
   const secs = document.getElementById("secs");
   const play = document.getElementById("play");
 
-  const DURATION = 5000;
+  const DURATION_S = BBTransformation.DURATION_S;
+  const DURATION = DURATION_S * 1000;
+  document.getElementById("total").textContent = DURATION_S.toFixed(2);
   let playing = true;
   let origin = performance.now();
 
   function show(t) {
     anim.seek(t);
-    secs.textContent = (t * 5).toFixed(2);
+    secs.textContent = (t * DURATION_S).toFixed(2);
     scrub.value = Math.round(t * 1000);
   }
 
@@ -233,13 +235,15 @@
     if (playing) origin = performance.now() - (scrub.value / 1000) * DURATION;
   });
 
-  document.querySelectorAll(".marks button").forEach((b) =>
+  document.querySelectorAll(".marks button").forEach((b) => {
+    const t = parseFloat(b.dataset.t);
+    b.textContent = (t * DURATION_S).toFixed(2) + "s " + b.dataset.label;
     b.addEventListener("click", () => {
       playing = false;
       play.textContent = "Play";
-      show(parseFloat(b.dataset.t));
-    }),
-  );
+      show(t);
+    });
+  });
 
   show(0);
   requestAnimationFrame(loop);
