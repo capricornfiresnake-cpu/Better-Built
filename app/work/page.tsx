@@ -35,7 +35,6 @@ export default function WorkPage() {
               <ProjectShowcase
                 key={project.slug}
                 project={project}
-                index={i}
                 layout={layouts[i % layouts.length]}
                 headingLevel="h2"
                 priority={i === 0}

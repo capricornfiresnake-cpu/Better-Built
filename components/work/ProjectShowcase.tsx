@@ -21,15 +21,12 @@ type Layout = "left" | "right" | "full";
  */
 export default function ProjectShowcase({
   project,
-  index,
   layout = "left",
   headingLevel = "h3",
   priority = false,
   className,
 }: {
   project: Project;
-  /** Position in the set. Rendered as the index it is. */
-  index: number;
   layout?: Layout;
   /** h2 where the showcase is the page's top-level content, h3 under a section heading. */
   headingLevel?: "h2" | "h3";
@@ -38,7 +35,6 @@ export default function ProjectShowcase({
 }) {
   const caseStudyHref = `/work/${project.slug}`;
   const isLive = Boolean(project.liveUrl);
-  const number = String(index + 1).padStart(2, "0");
   const full = layout === "full";
   const Heading = headingLevel;
 
@@ -95,9 +91,8 @@ export default function ProjectShowcase({
     >
       <Reveal delay={140} className={cn(full && "lg:col-span-5")}>
         <div className="flex items-center gap-4">
-          <span className="numeral text-[2.75rem] text-figure">{number}</span>
-          <span aria-hidden="true" className="h-px flex-1 bg-line-soft" />
           <StatusTag project={project} />
+          <span aria-hidden="true" className="h-px flex-1 bg-line-soft" />
         </div>
 
         <Heading className="display-lg mt-6 text-chalk">

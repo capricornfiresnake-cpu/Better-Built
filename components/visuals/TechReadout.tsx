@@ -1,13 +1,13 @@
 "use client";
 
-import { AT, DONE, PHASES } from "./useBuildPhases";
+import { AT, DONE } from "./useBuildPhases";
 import { cn } from "@/lib/utils";
 
 /**
  * The readout beside the build.
  *
- * Everything here reports the animation next to it: the stage number, the
- * components as they are placed, the progress bar, and the breakpoints
+ * Everything here reports the animation next to it: whether it is running,
+ * the components as they are placed, the progress bar, and the breakpoints
  * confirmed at the OPTIMIZE stage. Nothing is invented — there is deliberately
  * no performance score, because a number nobody can check is worth less than
  * the site loading quickly in front of you.
@@ -50,7 +50,6 @@ export default function TechReadout({
   progress: number;
   className?: string;
 }) {
-  const stage = Math.min(Math.max(phase, 0), PHASES.length - 1);
   const finished = phase >= DONE;
   const percent = Math.round(progress * 100);
   const filled = Math.round(progress * SEGMENTS);
@@ -67,7 +66,7 @@ export default function TechReadout({
       <div className="flex items-baseline justify-between gap-3">
         <span className="label-mono-sm text-dim">Build</span>
         <span className="label-mono-sm text-accent-lift tabular-nums">
-          {finished ? "Complete" : `${String(stage + 1).padStart(2, "0")} / 0${PHASES.length}`}
+          {finished ? "Complete" : "Running"}
         </span>
       </div>
 

@@ -46,7 +46,6 @@ export default async function CaseStudyPage({ params }: PageProps) {
   if (!project) notFound();
 
   const { previous, next } = adjacentProjects(project.slug);
-  const index = projects.findIndex((p) => p.slug === project.slug);
 
   return (
     <>
@@ -62,9 +61,6 @@ export default async function CaseStudyPage({ params }: PageProps) {
               <span aria-hidden="true" className="h-px w-8 bg-line-hard" />
               <span className="label-mono text-dim">{project.industry}</span>
               <StatusTag project={project} />
-              <span className="label-mono-sm ml-auto text-dim">
-                {String(index + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
-              </span>
             </div>
           </Reveal>
 

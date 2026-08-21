@@ -38,15 +38,14 @@ export default function BuildLadder({
                   reached ? "scale-x-100" : "scale-x-0",
                 )}
               />
-              <div className="flex items-baseline gap-3 py-4">
+              <div className="flex items-center gap-2.5 py-4">
                 <span
+                  aria-hidden="true"
                   className={cn(
-                    "label-mono-sm transition-colors duration-500",
-                    reached ? "text-accent-lift" : "text-dim",
+                    "block h-1.5 w-1.5 shrink-0 transition-colors duration-500",
+                    reached ? "bg-accent" : "bg-line-hard",
                   )}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
+                />
                 <span
                   className={cn(
                     "label-mono transition-colors duration-500",

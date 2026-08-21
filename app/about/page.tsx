@@ -106,18 +106,16 @@ export default function AboutPage() {
             </h2>
           </Reveal>
 
-          <ol className="mt-[clamp(2.5rem,5vw,4rem)] border-t border-line">
+          {/* A set, not a sequence — so it is a list, not a numbered one. */}
+          <ul className="mt-[clamp(2.5rem,5vw,4rem)] border-t border-line">
             {beliefs.map((belief, i) => (
               <li key={belief.title} className="border-b border-line">
                 <Reveal delay={i * 70}>
-                  <div className="group relative grid items-baseline gap-x-10 gap-y-4 px-1 py-9 transition-colors duration-500 sm:grid-cols-[5rem_minmax(0,24rem)_1fr] sm:px-4 hover:sm:bg-card">
+                  <div className="group relative grid items-baseline gap-x-12 gap-y-4 px-1 py-9 transition-colors duration-500 sm:grid-cols-[minmax(0,24rem)_1fr] sm:px-4 hover:sm:bg-card">
                     <span
                       aria-hidden="true"
                       className="absolute left-0 top-0 h-px w-0 bg-accent transition-[width] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"
                     />
-                    <span className="numeral text-[3rem] text-figure transition-colors duration-500 group-hover:text-accent-lift sm:text-[3.5rem]">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
                     <h3 className="display-md max-w-[20ch] text-chalk">{belief.title}</h3>
                     <p className="max-w-[48ch] text-[1rem] leading-relaxed text-slate">
                       {belief.body}
@@ -126,7 +124,7 @@ export default function AboutPage() {
                 </Reveal>
               </li>
             ))}
-          </ol>
+          </ul>
         </Container>
       </Section>
 

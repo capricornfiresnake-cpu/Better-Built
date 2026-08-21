@@ -50,7 +50,7 @@ export default function ProcessPage() {
         lines={["Process"]}
         lede="Most business websites launch two to three weeks after the first conversation. Here's exactly what happens in between."
         meta={[
-          { label: "Stages", value: "04" },
+          { label: "Stages", value: "Four" },
           { label: "Typical duration", value: "2–3 weeks" },
           { label: "Contract", value: "None" },
         ]}

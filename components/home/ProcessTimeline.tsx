@@ -87,11 +87,11 @@ export default function ProcessTimeline({ tone = "void" }: { tone?: "void" | "de
 
           return (
             <li
-              key={step.number}
+              key={step.title}
               className={cn(
                 "relative grid gap-y-4 border-b border-line py-[clamp(2rem,4vw,3.25rem)] last:border-b-0",
-                "sm:grid-cols-[3.5rem_minmax(0,1fr)] sm:gap-x-6 sm:pl-8",
-                "lg:grid-cols-[7rem_minmax(0,20rem)_minmax(0,1fr)] lg:gap-x-10",
+                "sm:pl-8",
+                "lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-x-12",
               )}
             >
               <span
@@ -102,16 +102,7 @@ export default function ProcessTimeline({ tone = "void" }: { tone?: "void" | "de
                 )}
               />
 
-              <span
-                className={cn(
-                  "numeral text-[2.5rem] transition-colors duration-500 lg:text-[3.5rem]",
-                  reached ? "text-accent-lift" : "text-figure",
-                )}
-              >
-                {step.number}
-              </span>
-
-              <div className="lg:col-start-2">
+              <div>
                 <h3
                   className={cn(
                     "display-md transition-colors duration-500",
@@ -134,7 +125,7 @@ export default function ProcessTimeline({ tone = "void" }: { tone?: "void" | "de
                 </p>
               </div>
 
-              <div className="max-w-[46ch] sm:col-start-2 lg:col-start-3 lg:row-start-1">
+              <div className="max-w-[46ch] lg:col-start-2 lg:row-start-1">
                 <p className="text-[1.0625rem] leading-relaxed text-chalk">{step.body}</p>
                 <p className="mt-3 text-[0.9375rem] leading-relaxed text-slate">
                   {step.detail}

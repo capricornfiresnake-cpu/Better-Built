@@ -85,7 +85,6 @@ export const services: Service[] = [
 ];
 
 export type ProcessStep = {
-  number: string;
   title: string;
   body: string;
   detail: string;
@@ -93,28 +92,24 @@ export type ProcessStep = {
 
 export const processSteps: ProcessStep[] = [
   {
-    number: "01",
     title: "Tell Us About Your Business",
     body: "We learn about your business, your goals, your customers, and what you want the website to do.",
     detail:
       "A short conversation, not a questionnaire marathon. What you sell, who buys it, what you want more of, and what your current site gets wrong.",
   },
   {
-    number: "02",
     title: "We Build",
     body: "Better Built designs and develops the website around your business.",
     detail:
       "Design and build happen together. You get a real, working site to look at — not a flat picture of one.",
   },
   {
-    number: "03",
     title: "Review",
     body: "You review the website and tell us what you want changed.",
     detail:
       "Walk through it on your own phone and laptop. Send notes in plain language. We make the changes.",
   },
   {
-    number: "04",
     title: "Launch",
     body: "The website goes live and is ready for customers.",
     detail:

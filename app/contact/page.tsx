@@ -52,10 +52,11 @@ export default function ContactPage() {
                   <p className="label-mono text-dim">What happens next</p>
                   <ol className="mt-5 space-y-4">
                     {processSteps.map((step) => (
-                      <li key={step.number} className="flex gap-4">
-                        <span className="label-mono-sm mt-1 shrink-0 text-accent-lift">
-                          {step.number}
-                        </span>
+                      <li key={step.title} className="flex gap-4">
+                        <span
+                          aria-hidden="true"
+                          className="mt-[0.7em] h-px w-3 shrink-0 bg-accent"
+                        />
                         <span className="text-[0.9375rem] leading-relaxed text-slate">
                           {step.title}
                         </span>
