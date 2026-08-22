@@ -80,7 +80,7 @@ export const projects: Project[] = [
     industry: "Sports & Recreation",
     status: "client",
     domain: "wavelinksurf.com",
-    liveUrl: "https://wave-link-surf.vercel.app",
+    liveUrl: "https://wavelinksurf.com",
     cover: {
       desktop: "/work/wavelink-surf-desktop.webp",
       mobile: "/work/wavelink-surf-mobile.webp",

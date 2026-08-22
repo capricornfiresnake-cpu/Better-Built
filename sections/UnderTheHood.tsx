@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Reveal from "@/components/ui/Reveal";
 import MotionBackground from "@/components/visuals/MotionBackground";
@@ -14,6 +14,11 @@ import { cn } from "@/lib/utils";
  * Four disciplines, and one interface diagram that answers each of them: the
  * type system highlights, the component boundaries surface, the layout
  * genuinely reflows to a phone, the loading strategy shows itself.
+ *
+ * Both follow the scroll. The discipline crossing the reading line is the one
+ * lit, and the diagram shows its view — there is nothing to click, and nothing
+ * is hidden behind the highlight: every discipline and every item under it is
+ * on the page the whole time.
  *
  * Every line here is true of this page. Nothing is a capability we would like
  * to have — a visitor can open dev tools and check all of it, which is the
@@ -246,7 +251,45 @@ export default function UnderTheHood({
 }: {
   surface?: "void" | "deck";
 }) {
-  const [active, setActive] = useState<Facet>("design");
+  const listRef = useRef<HTMLUListElement>(null);
+  const [index, setIndex] = useState(0);
+  const active: Facet = FACETS[index].key;
+
+  /**
+   * The active discipline follows the scroll rather than a click.
+   *
+   * Nothing here is hidden behind the interaction — all four disciplines and
+   * every item under them are on the page at all times — so the highlight is
+   * purely a reading aid, and driving it from scroll position means it also
+   * works for anyone who never touches the section.
+   */
+  useEffect(() => {
+    const node = listRef.current;
+    if (!node) return;
+
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const rect = node.getBoundingClientRect();
+      const anchor = window.innerHeight * 0.45;
+      const travelled = (anchor - rect.top) / rect.height;
+      const clamped = Math.min(0.9999, Math.max(0, travelled));
+      setIndex(Math.floor(clamped * FACETS.length));
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
 
   return (
     <Section surface={surface} id="under-the-hood" rule>
@@ -271,13 +314,12 @@ export default function UnderTheHood({
 
         <div className="mt-[clamp(2.5rem,5vw,4rem)] grid gap-x-14 gap-y-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <ul className="border-t border-line">
+            <ul ref={listRef} className="border-t border-line">
               {FACETS.map((facet) => {
                 const on = facet.key === active;
                 return (
                   <li
                     key={facet.key}
-                    onMouseEnter={() => setActive(facet.key)}
                     className={cn(
                       "relative border-b border-line transition-colors duration-500",
                       on && "bg-card/60",
@@ -291,33 +333,22 @@ export default function UnderTheHood({
                       )}
                     />
                     <div className="px-1 py-6 sm:px-4">
-                      {/* The button only chooses which view the diagram shows.
-                          Every facet's content stays on the page either way, so
-                          nothing here is hidden behind an interaction. */}
-                      <h3>
-                        <button
-                          type="button"
-                          onClick={() => setActive(facet.key)}
-                          onFocus={() => setActive(facet.key)}
-                          aria-pressed={on}
-                          className="flex w-full items-baseline gap-3 text-left"
+                      <h3 className="flex items-baseline gap-3">
+                        <span
+                          aria-hidden="true"
+                          className={cn(
+                            "block h-1.5 w-1.5 shrink-0 translate-y-[-0.2em] transition-colors duration-400",
+                            on ? "bg-accent" : "bg-line-hard",
+                          )}
+                        />
+                        <span
+                          className={cn(
+                            "display-md transition-colors duration-400",
+                            on ? "text-chalk" : "text-slate",
+                          )}
                         >
-                          <span
-                            aria-hidden="true"
-                            className={cn(
-                              "block h-1.5 w-1.5 shrink-0 translate-y-[-0.2em] transition-colors duration-400",
-                              on ? "bg-accent" : "bg-line-hard",
-                            )}
-                          />
-                          <span
-                            className={cn(
-                              "display-md transition-colors duration-400",
-                              on ? "text-chalk" : "text-slate",
-                            )}
-                          >
-                            {facet.title}
-                          </span>
-                        </button>
+                          {facet.title}
+                        </span>
                       </h3>
 
                       <p className="mt-2.5 pl-[1.125rem] text-[0.9375rem] text-dim">
@@ -348,9 +379,6 @@ export default function UnderTheHood({
 
           <Reveal delay={80} className="min-w-0 lg:col-span-7">
             <Diagram active={active} />
-            <p className="label-mono-sm mt-4 text-dim">
-              One layout, four views — hover or tap a discipline
-            </p>
           </Reveal>
         </div>
       </Container>
