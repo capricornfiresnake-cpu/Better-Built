@@ -5,13 +5,15 @@ import { pageMeta } from "@/lib/seo";
 import { site } from "@/lib/site";
 
 /**
- * Terms covering use of this website only. Project-specific terms belong in the
- * agreement sent to each client. Have a professional review this before launch.
+ * Terms covering use of this website, plus the refund and cancellation policy
+ * that Stripe checkout points at. Project-specific terms belong in the agreement
+ * sent to each client. Have a professional review this before launch.
  */
 
 export const metadata = pageMeta({
   title: "Terms of Service",
-  description: "The terms that apply to using the Better Built website.",
+  description:
+    "The terms that apply to using the Better Built website, including how payments, refunds, and cancellations work.",
   path: "/terms",
 });
 
@@ -21,7 +23,7 @@ export default function TermsPage() {
       <PageHeader
         eyebrow="Legal"
         lines={["Terms of", "Service"]}
-        lede="The terms that apply when you use this website."
+        lede="The terms that apply when you use this website, including how payments and refunds work."
       />
 
       <Section surface="void" size="tight">
@@ -48,12 +50,59 @@ export default function TermsPage() {
               design and are not an offer or endorsement.
             </p>
 
-            <h2>Pricing shown here</h2>
+            <h2>Pricing and payment</h2>
             <p>
-              Prices listed on this website describe our standard offering and are
-              provided for information. The terms of any specific project — scope,
-              schedule, payment, and revisions — are set out in the agreement we
-              send before work begins. That agreement governs the project.
+              Prices listed on this website describe our standard offering. The
+              $800 website is paid before work begins, and support plans are billed
+              on a recurring basis until you cancel. Card payments are handled by
+              Stripe — we never see or store your card details.
+            </p>
+            <p>
+              The terms of any specific project — scope, schedule, and revisions —
+              are set out in the agreement we send before work begins. That
+              agreement governs the project. Where it says something different from
+              this page about a particular project, the agreement wins.
+            </p>
+
+            <h2 id="refunds">Refunds and cancellations</h2>
+            <p>
+              We would rather refund you than keep money for work you are unhappy
+              with. What you can get back depends on how far along the work is:
+            </p>
+            <ul>
+              <li>
+                <strong>The $800 website.</strong> Full refund at any point before
+                we send you the first design. After that and before the site goes
+                live, half the fee is refundable — the other half covers design
+                work already done. Once the site is live it is yours to keep, and
+                the fee is no longer refundable.
+              </li>
+              <li>
+                <strong>Website Updates, $125 per month.</strong> Cancel at any
+                time. Cancelling stops the next payment. The month you have already
+                paid for runs to its end and is not refunded part-way through.
+              </li>
+              <li>
+                <strong>Annual Plan, $89 per month billed annually.</strong> Full
+                refund within 14 days of payment if you have not yet asked for any
+                update work. After 14 days the year runs to its end and is not
+                refunded, though you can cancel the renewal at any point before it.
+              </li>
+              <li>
+                <strong>Domain and hosting.</strong> These are billed by the
+                provider in your name, not by us, so their refund terms apply and
+                not ours.
+              </li>
+            </ul>
+            <p>
+              To cancel a plan or ask for a refund, email{" "}
+              <a href={`mailto:${site.email}`}>{site.email}</a> from the address you
+              paid with. Approved refunds go back to the original card and usually
+              appear within five to ten business days.
+            </p>
+            <p>
+              If something has gone wrong, please email us before opening a dispute
+              with your bank. We can almost always sort it out faster ourselves.
             </p>
 
             <h2>Submitting an enquiry</h2>

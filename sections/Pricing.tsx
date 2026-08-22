@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import AnimatedText from "@/components/ui/AnimatedText";
 import Reveal from "@/components/ui/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
@@ -160,6 +162,14 @@ export default function Pricing({
                   <p className="mt-7 max-w-[38ch] text-[0.875rem] leading-relaxed text-dim">
                     Hosting and the domain are set up in your name — those are billed by
                     the provider, not by us.
+                  </p>
+                  <p className="mt-3 text-[0.875rem] text-dim">
+                    <Link
+                      href="/terms#refunds"
+                      className="link-underline transition-colors duration-300 hover:text-chalk"
+                    >
+                      Refunds and cancellations
+                    </Link>
                   </p>
                 </div>
 

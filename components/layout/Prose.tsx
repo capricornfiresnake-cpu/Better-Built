@@ -12,6 +12,7 @@ export default function Prose({ children }: { children: ReactNode }) {
         [&_ul]:mt-4 [&_ul]:space-y-2.5
         [&_li]:relative [&_li]:pl-6 [&_li]:text-[1.0625rem] [&_li]:leading-relaxed [&_li]:text-slate
         [&_li]:before:absolute [&_li]:before:left-0 [&_li]:before:top-[0.85em] [&_li]:before:h-px [&_li]:before:w-3 [&_li]:before:bg-accent
+        [&_strong]:font-medium [&_strong]:text-chalk
         [&_a]:text-chalk [&_a]:underline [&_a]:decoration-line-hard [&_a]:underline-offset-4 hover:[&_a]:decoration-accent
       "
     >
