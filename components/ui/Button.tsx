@@ -90,10 +90,26 @@ export function ButtonLink({
   withArrow = false,
   ...rest
 }: ButtonLinkProps) {
-  return (
-    <Link href={href} className={classes(variant, size, className)} {...rest}>
+  const body = (
+    <>
       <span>{children}</span>
       {withArrow ? <Arrow /> : null}
+    </>
+  );
+
+  // An absolute URL leaves the site — Stripe checkout, a live client site —
+  // so it is a plain anchor rather than a client-routed link.
+  if (/^https?:/.test(href)) {
+    return (
+      <a href={href} className={classes(variant, size, className)}>
+        {body}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={href} className={classes(variant, size, className)} {...rest}>
+      {body}
     </Link>
   );
 }

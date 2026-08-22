@@ -3,8 +3,31 @@ import Reveal from "@/components/ui/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container, Eyebrow, Section, Ticks } from "@/components/ui/Section";
 import DigitalGrid from "@/components/visuals/DigitalGrid";
-import { supportPlans, websitePlan } from "@/data/pricing";
+import { planAction, supportPlans, websitePlan } from "@/data/pricing";
 import { cn } from "@/lib/utils";
+
+/**
+ * Shown only beside a button that takes a card, so nobody is told about
+ * secure checkout on a button that just opens the contact form.
+ */
+function SecureNote() {
+  return (
+    <span className="label-mono-sm inline-flex items-center gap-2 text-dim">
+      <svg
+        viewBox="0 0 12 12"
+        aria-hidden="true"
+        className="h-3 w-3 shrink-0 text-accent-lift"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+      >
+        <rect x="2.2" y="5.2" width="7.6" height="5.2" />
+        <path d="M4 5.2V3.6a2 2 0 0 1 4 0v1.6" />
+      </svg>
+      Secure checkout by Stripe
+    </span>
+  );
+}
 
 /** What the one-time price actually buys, in three words. */
 const delivery = ["Designed", "Built", "Launched"];
@@ -65,6 +88,8 @@ export default function Pricing({
       the ongoing plans. */
   showSupport?: boolean;
 }) {
+  const buildAction = planAction(websitePlan);
+
   return (
     <Section surface={surface} id="pricing" rule>
       <Container>
@@ -120,15 +145,16 @@ export default function Pricing({
                     {websitePlan.description}
                   </p>
 
-                  <div className="mt-9">
+                  <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3">
                     <ButtonLink
-                      href={websitePlan.cta.href}
+                      href={buildAction.href}
                       size="lg"
                       withArrow
                       className="label-mono"
                     >
-                      {websitePlan.cta.label}
+                      {buildAction.label}
                     </ButtonLink>
+                    {buildAction.paying ? <SecureNote /> : null}
                   </div>
 
                   <p className="mt-7 max-w-[38ch] text-[0.875rem] leading-relaxed text-dim">
@@ -228,13 +254,18 @@ export default function Pricing({
   
                     <div className="mt-auto pt-8">
                       <ButtonLink
-                        href={plan.cta.href}
+                        href={planAction(plan).href}
                         variant="secondary"
                         withArrow
                         className="label-mono"
                       >
-                        {plan.cta.label}
+                        {planAction(plan).label}
                       </ButtonLink>
+                      {planAction(plan).paying ? (
+                        <div className="mt-4">
+                          <SecureNote />
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                 </Reveal>
