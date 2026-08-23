@@ -106,7 +106,7 @@ export const supportPlans: PricingPlan[] = [
     ],
     cta: { label: "Choose annual", href: "/contact" },
     checkoutUrl: "https://buy.stripe.com/fZufZi7KHcp2e593lw0co01",
-    checkoutLabel: "Pay $1,068 for the year",
+    checkoutLabel: "Pay for the year",
     emphasis: "support",
     highlight: "Better value",
   },
@@ -158,12 +158,7 @@ export function planAction(plan: PricingPlan): {
   const label = plan.checkoutLabel ?? plan.cta.label;
 
   if (plan.checkoutVia === "brief") {
-    return {
-      href: `${plan.cta.href}?plan=${plan.id}`,
-      label,
-      paying: false,
-      viaBrief: true,
-    };
+    return { href: plan.cta.href, label, paying: false, viaBrief: true };
   }
 
   return { href: plan.checkoutUrl, label, paying: true, viaBrief: false };

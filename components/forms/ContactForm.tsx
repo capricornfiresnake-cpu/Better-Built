@@ -52,11 +52,11 @@ function Field({
  * Lead form. Posts JSON to `/api/lead`, which is the single place to wire up a
  * CRM, email automation, or SMS follow-up — no component changes needed.
  *
- * Every submission is delivered straight away. Arriving with `?plan=website`
- * means the visitor came from a pricing button to buy, so once their details
- * are through they are offered checkout rather than a plain thank-you. Whether
- * the payment then happened is a question for the Stripe dashboard, which is
- * what the reference carried on the lead is for.
+ * Every submission is delivered straight away, and everyone who sends one is
+ * then offered the build checkout — the form is the front door to the $800
+ * whichever page they arrived from. Whether the payment actually happened is a
+ * question for the Stripe dashboard, which is what the reference carried on
+ * the lead is for.
  */
 export default function ContactForm() {
   const id = useId();
@@ -103,10 +103,7 @@ export default function ContactForm() {
       new FormData(event.currentTarget).entries(),
     ) as Answers;
 
-    /* Read at submit time rather than on render: it keeps the page static and
-       there is no hydration mismatch to worry about. */
-    const plan = new URLSearchParams(window.location.search).get("plan");
-    const buying = plan === websitePlan.id && Boolean(websitePlan.checkoutUrl);
+    const buying = Boolean(websitePlan.checkoutUrl);
 
     /* Goes out with the lead and into Stripe, so a payment can be matched back
        to the person who filled this in. */
@@ -138,8 +135,8 @@ export default function ContactForm() {
           plan, and a timeline. If anything is urgent, reply to the email we send and it
           will reach us directly.
         </p>
-        {/* Only for someone who arrived from a pricing button. Their details
-            are already in, so paying is an option rather than a toll gate. */}
+        {/* Their details are already in, so paying is an option rather than a
+            toll gate. */}
         {checkoutHref ? (
           <div className="mt-9 border-t border-line pt-8">
             <p className="max-w-[42ch] text-[0.9375rem] leading-relaxed text-slate">
