@@ -58,7 +58,7 @@ export const websitePlan: PricingPlan = {
     "Hosting setup assistance",
   ],
   cta: { label: "Build My Website", href: "/contact" },
-  checkoutUrl: "",
+  checkoutUrl: "https://buy.stripe.com/28E5kE0ifexaaSXe0a0co02",
   checkoutLabel: "Pay $800 and start",
   emphasis: "primary",
 };
@@ -78,7 +78,7 @@ export const supportPlans: PricingPlan[] = [
       "Ongoing maintenance",
     ],
     cta: { label: "Add ongoing updates", href: "/contact" },
-    checkoutUrl: "",
+    checkoutUrl: "https://buy.stripe.com/6oU00k9SPfBe8KPg8i0co00",
     checkoutLabel: "Subscribe — $125/mo",
     emphasis: "support",
   },
