@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { sendLeadEmail } from "@/lib/leadEmail";
+
 /**
  * LEAD INTAKE
  * ===========
@@ -7,19 +9,13 @@ import { NextResponse } from "next/server";
  * Single integration point for the contact form. The frontend posts JSON here
  * and expects `{ ok: true }` back.
  *
- * TO CONNECT A BACKEND, replace the "deliver" step below with any of:
- *   - CRM      → POST to HubSpot / Pipedrive / GoHighLevel
- *   - Email    → Resend, Postmark, SendGrid
- *   - SMS      → Twilio, to alert the setter immediately
- *   - Database → Supabase, Postgres, Airtable
- *   - Webhook  → Zapier / Make, if the funnel lives there
+ * Leads are emailed on through Resend — see lib/leadEmail for the environment
+ * variables that needs. Every lead is also written to the server log first, so
+ * one that fails to send is recoverable from the Vercel logs rather than gone.
  *
- * Keep the validation above it — it is what stops junk reaching the CRM.
- *
- * NOTHING IS DELIVERED YET. The step below writes to the server log and stops
- * there, which on Vercel means the function logs and nobody's inbox. Until a
- * real destination is wired in, every lead — paid ones included — is only as
- * visible as those logs.
+ * TO ADD ANOTHER DESTINATION — a CRM, SMS, a database, a Zapier webhook — put
+ * it beside the send below. Keep the validation above it: that is what stops
+ * junk getting through.
  */
 
 export const runtime = "nodejs";
@@ -98,12 +94,36 @@ export async function POST(request: Request) {
   }
 
   // --- Deliver -------------------------------------------------------------
-  // Replace this with the real destination. Until then the lead is logged so
-  // nothing is silently lost in development.
+  // Logged before it is sent, so a delivery failure leaves a trail to work from.
   console.info(lead.paid ? "[better-built] PAID lead" : "[better-built] new lead", {
     ...lead,
     receivedAt: new Date().toISOString(),
   });
+
+  const delivery = await sendLeadEmail(lead);
+
+  if (!delivery.ok) {
+    console.error("[better-built] lead email failed", delivery.reason);
+
+    /* Say so rather than showing a receipt for a message nobody got. A paid
+       customer is told their payment is safe; the thank-you page handles that
+       wording. */
+    return NextResponse.json(
+      {
+        ok: false,
+        message: lead.paid
+          ? "Your payment went through, but your details didn't reach us."
+          : "That didn't send. Try again, or email us directly.",
+      },
+      { status: 502 },
+    );
+  }
+
+  if (delivery.skipped === "no-key") {
+    console.warn(
+      "[better-built] RESEND_API_KEY is not set — this lead reached the log and nothing else.",
+    );
+  }
 
   return NextResponse.json({ ok: true });
 }
