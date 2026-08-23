@@ -9,12 +9,12 @@ import {
   checkoutUrlWith,
   industryOptions,
   needOptions,
+  newCheckoutReference,
   websitePlan,
 } from "@/data/pricing";
-import { clearLead, newReference, stashLead } from "@/lib/leadHandoff";
 import { cn } from "@/lib/utils";
 
-type Status = "idle" | "submitting" | "checkout" | "success" | "error";
+type Status = "idle" | "submitting" | "success" | "error";
 
 type Answers = Record<string, string>;
 
@@ -52,21 +52,21 @@ function Field({
  * Lead form. Posts JSON to `/api/lead`, which is the single place to wire up a
  * CRM, email automation, or SMS follow-up — no component changes needed.
  *
- * Arriving with `?plan=website` means the visitor came from a pricing button to
- * buy, not to ask. The answers are then held back and only delivered once the
- * customer returns from Stripe, so a brief that was never paid for never lands
- * in the inbox. See lib/leadHandoff for what that does and does not guarantee.
+ * Every submission is delivered straight away. Arriving with `?plan=website`
+ * means the visitor came from a pricing button to buy, so once their details
+ * are through they are offered checkout rather than a plain thank-you. Whether
+ * the payment then happened is a question for the Stripe dashboard, which is
+ * what the reference carried on the lead is for.
  */
 export default function ContactForm() {
   const id = useId();
   const [need, setNeed] = useState<string>(needOptions[0]);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
-  const [checkout, setCheckout] = useState<{ href: string; answers: Answers } | null>(
-    null,
-  );
+  const [checkoutHref, setCheckoutHref] = useState<string | null>(null);
 
-  async function deliver(answers: Answers) {
+  /** True once the answers are safely on their way to the inbox. */
+  async function deliver(answers: Answers): Promise<boolean> {
     setStatus("submitting");
     setError(null);
 
@@ -84,7 +84,7 @@ export default function ContactForm() {
         throw new Error(data?.message ?? "That didn't send.");
       }
 
-      setStatus("success");
+      return true;
     } catch (submitError) {
       setStatus("error");
       setError(
@@ -92,6 +92,7 @@ export default function ContactForm() {
           ? submitError.message
           : "That didn't send. Try again, or email us directly.",
       );
+      return false;
     }
   }
 
@@ -105,75 +106,21 @@ export default function ContactForm() {
     /* Read at submit time rather than on render: it keeps the page static and
        there is no hydration mismatch to worry about. */
     const plan = new URLSearchParams(window.location.search).get("plan");
+    const buying = plan === websitePlan.id && Boolean(websitePlan.checkoutUrl);
 
-    if (plan === websitePlan.id && websitePlan.checkoutUrl) {
-      const reference = newReference();
-      stashLead({ ...answers, reference });
-      setCheckout({
-        href: checkoutUrlWith(websitePlan, { email: answers.email, reference }),
-        answers,
-      });
-      setStatus("checkout");
-      return;
+    /* Goes out with the lead and into Stripe, so a payment can be matched back
+       to the person who filled this in. */
+    const reference = buying ? newCheckoutReference() : "";
+
+    if (!(await deliver({ ...answers, reference }))) return;
+
+    if (buying) {
+      setCheckoutHref(
+        checkoutUrlWith(websitePlan, { email: answers.email, reference }),
+      );
     }
 
-    await deliver(answers);
-  }
-
-  /* Someone who wants to talk before paying is a lead, not a lost sale. Their
-     answers go through now, and the stashed copy is dropped so the thank-you
-     page cannot send them a second time. */
-  async function sendWithoutPaying(answers: Answers) {
-    clearLead();
-    await deliver(answers);
-  }
-
-  /* Stays mounted while the "send without paying" request is in flight, so
-     the form does not flash back in underneath it. */
-  if (checkout && status !== "success") {
-    return (
-      <div className="rounded-lg border border-line bg-card p-[clamp(1.75rem,4vw,3rem)]">
-        <p className="label-mono text-accent-lift">Last step</p>
-        <h2 className="display-lg mt-6 max-w-[18ch] text-chalk">
-          Pay {websitePlan.price} and we start.
-        </h2>
-        <p className="mt-6 max-w-[46ch] text-[1.0625rem] leading-relaxed text-slate">
-          Your answers are ready. They reach us the moment the payment goes
-          through, and we come back with questions, a plan, and a timeline.
-        </p>
-
-        <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3">
-          <ButtonLink href={checkout.href} size="lg" withArrow className="label-mono">
-            Pay {websitePlan.price} and start
-          </ButtonLink>
-          <SecureNote />
-        </div>
-
-        <p className="mt-7 text-[0.875rem] text-dim">
-          <Link
-            href="/terms#refunds"
-            className="link-underline transition-colors duration-300 hover:text-chalk"
-          >
-            Refunds and cancellations
-          </Link>
-        </p>
-
-        <div className="mt-8 border-t border-line pt-6">
-          <button
-            type="button"
-            onClick={() => sendWithoutPaying(checkout.answers)}
-            disabled={status === "submitting"}
-            className="link-underline label-mono text-slate transition-colors duration-300 hover:text-chalk"
-          >
-            Rather talk first? Send this without paying
-          </button>
-        </div>
-
-        <p role="status" aria-live="polite" className="min-h-5 text-[0.9375rem]">
-          {error ? <span className="text-accent-lift">{error}</span> : null}
-        </p>
-      </div>
-    );
+    setStatus("success");
   }
 
   if (status === "success") {
@@ -191,13 +138,38 @@ export default function ContactForm() {
           plan, and a timeline. If anything is urgent, reply to the email we send and it
           will reach us directly.
         </p>
-        <button
-          type="button"
-          onClick={() => setStatus("idle")}
-          className="link-underline label-mono mt-8 text-slate"
-        >
-          Send another project
-        </button>
+        {/* Only for someone who arrived from a pricing button. Their details
+            are already in, so paying is an option rather than a toll gate. */}
+        {checkoutHref ? (
+          <div className="mt-9 border-t border-line pt-8">
+            <p className="max-w-[42ch] text-[0.9375rem] leading-relaxed text-slate">
+              Ready to start now? Paying the {websitePlan.price} puts your build in
+              the queue. No rush — we&rsquo;ll be in touch either way.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+              <ButtonLink href={checkoutHref} size="lg" withArrow className="label-mono">
+                Pay {websitePlan.price} and start
+              </ButtonLink>
+              <SecureNote />
+            </div>
+            <p className="mt-6 text-[0.875rem] text-dim">
+              <Link
+                href="/terms#refunds"
+                className="link-underline transition-colors duration-300 hover:text-chalk"
+              >
+                Refunds and cancellations
+              </Link>
+            </p>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setStatus("idle")}
+            className="link-underline label-mono mt-8 text-slate"
+          >
+            Send another project
+          </button>
+        )}
       </div>
     );
   }

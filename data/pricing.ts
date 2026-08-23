@@ -170,9 +170,19 @@ export function planAction(plan: PricingPlan): {
 }
 
 /**
- * The checkout URL with the customer's email prefilled and a reference that
- * ties the Stripe payment back to the brief they just filled in. Both are
- * plain query parameters that Stripe Payment Links accept.
+ * Ties a Stripe payment back to the enquiry that produced it. Stripe only
+ * accepts letters, numbers, dashes and underscores in client_reference_id.
+ */
+export function newCheckoutReference(): string {
+  const stamp = Date.now().toString(36);
+  const noise = Math.random().toString(36).slice(2, 8);
+  return `bb_${stamp}_${noise}`;
+}
+
+/**
+ * The checkout URL with the customer's email prefilled and the reference that
+ * appears on their enquiry. Both are plain query parameters that Stripe
+ * Payment Links accept.
  */
 export function checkoutUrlWith(
   plan: PricingPlan,

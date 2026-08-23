@@ -1,4 +1,3 @@
-import PaidBriefDelivery from "@/components/forms/PaidBriefDelivery";
 import PageHeader from "@/components/layout/PageHeader";
 import Reveal from "@/components/ui/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
@@ -9,8 +8,11 @@ import { site } from "@/lib/site";
 
 /**
  * Where Stripe sends people after they pay. Set each Payment Link's
- * confirmation page to redirect here, or the brief collected before checkout
- * is never delivered.
+ * confirmation page to redirect here so nobody's last impression of the studio
+ * is a bare receipt.
+ *
+ * Nothing is submitted from this page — the enquiry was delivered when the form
+ * was sent, before checkout.
  */
 export const metadata = pageMeta({
   title: "Payment received",
@@ -37,7 +39,11 @@ export default function ThankYouPage() {
                 <h2 className="display-lg mt-6 max-w-[18ch] text-chalk">
                   Your receipt is in your inbox.
                 </h2>
-                <PaidBriefDelivery />
+                <p className="mt-6 max-w-[46ch] text-[1.0625rem] leading-relaxed text-slate">
+                  We have your details from the form and your payment from Stripe.
+                  Next we&rsquo;ll come back with questions, a plan, and a timeline
+                  — usually the same day.
+                </p>
                 <p className="mt-8 max-w-[46ch] text-[0.9375rem] leading-relaxed text-dim">
                   Anything you forgot to mention can go straight to{" "}
                   <a
@@ -75,7 +81,12 @@ export default function ThankYouPage() {
                 <div className="mt-10 border-t border-line pt-6">
                   <p className="label-mono text-dim">While you wait</p>
                   <div className="mt-5">
-                    <ButtonLink href="/work" variant="secondary" withArrow className="label-mono">
+                    <ButtonLink
+                      href="/work"
+                      variant="secondary"
+                      withArrow
+                      className="label-mono"
+                    >
                       See the work
                     </ButtonLink>
                   </div>

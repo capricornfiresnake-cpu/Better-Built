@@ -32,7 +32,7 @@ export type Lead = {
   website: string;
   need: string;
   details: string;
-  paid: boolean;
+  /** Present when the enquiry came from a pricing button and was shown checkout. */
   reference: string;
 };
 
@@ -64,9 +64,8 @@ function who(lead: Lead): string {
 }
 
 function subjectFor(lead: Lead): string {
-  return lead.paid
-    ? `PAID — $800 website — ${who(lead)}`
-    : `New enquiry — ${lead.need || "unspecified"} — ${who(lead)}`;
+  const tag = lead.reference ? "Checkout" : "Enquiry";
+  return `${tag} — ${lead.need || "unspecified"} — ${who(lead)}`;
 }
 
 function textBody(lead: Lead): string {
@@ -77,13 +76,15 @@ function textBody(lead: Lead): string {
   if (lead.details) lines.push("", "Details:", lead.details);
 
   lines.push("");
-  lines.push(
-    lead.paid
-      ? "PAID — this brief arrived after the customer returned from Stripe checkout."
-      : "Not paid — this is an enquiry, no payment attached.",
-  );
-  if (lead.reference) lines.push(`Stripe reference: ${lead.reference}`);
-  lines.push("", "Confirm every payment in the Stripe dashboard before starting work.");
+  if (lead.reference) {
+    lines.push(
+      "This person was shown the $800 checkout after sending this.",
+      `Stripe reference: ${lead.reference}`,
+      "Check the Stripe dashboard to see whether the payment went through.",
+    );
+  } else {
+    lines.push("Enquiry only — no checkout was offered.");
+  }
 
   return lines.join("\n");
 }
@@ -101,16 +102,14 @@ function htmlBody(lead: Lead): string {
     ? `<p style="margin:20px 0 0;white-space:pre-wrap">${escapeHtml(lead.details)}</p>`
     : "";
 
-  const banner = lead.paid
-    ? `<p style="margin:0 0 20px;padding:10px 14px;background:#0f7b3f;color:#fff;font-weight:600">
-         PAID — returned from Stripe checkout${
-           lead.reference ? ` · ref ${escapeHtml(lead.reference)}` : ""
-         }
+  const banner = lead.reference
+    ? `<p style="margin:0 0 8px;padding:10px 14px;background:#111;color:#fff;font-weight:600">
+         Shown the $800 checkout · ref ${escapeHtml(lead.reference)}
        </p>
        <p style="margin:0 0 20px;color:#666;font-size:13px">
-         Confirm the payment in the Stripe dashboard before starting work.
+         Check the Stripe dashboard to see whether the payment went through.
        </p>`
-    : `<p style="margin:0 0 20px;color:#666">Enquiry — no payment attached.</p>`;
+    : `<p style="margin:0 0 20px;color:#666">Enquiry — no checkout offered.</p>`;
 
   return `<div style="font-family:system-ui,-apple-system,Segoe UI,sans-serif;font-size:15px;line-height:1.5;color:#111">
     ${banner}

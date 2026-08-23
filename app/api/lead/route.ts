@@ -30,12 +30,10 @@ type LeadPayload = {
   need: string;
   details: string;
   /**
-   * True when the brief arrived after checkout rather than instead of it.
-   * It means "came back through the success page", not "Stripe confirmed the
-   * payment" — Stripe is the record of that.
+   * Matches the client_reference_id on the Stripe payment, when this enquiry
+   * came from a pricing button. Present means "was offered checkout", never
+   * "has paid" — the Stripe dashboard is the only answer to that.
    */
-  paid: boolean;
-  /** Matches the client_reference_id on the Stripe payment, when there is one. */
   reference: string;
   /** Honeypot. Any value means a bot filled it. */
   companyUrl?: string;
@@ -75,7 +73,6 @@ export async function POST(request: Request) {
     website: asString(raw.website),
     need: asString(raw.need),
     details: asString(raw.details).slice(0, 4000),
-    paid: raw.paid === true,
     reference: asString(raw.reference).slice(0, 200),
   };
 
@@ -95,7 +92,7 @@ export async function POST(request: Request) {
 
   // --- Deliver -------------------------------------------------------------
   // Logged before it is sent, so a delivery failure leaves a trail to work from.
-  console.info(lead.paid ? "[better-built] PAID lead" : "[better-built] new lead", {
+  console.info("[better-built] new lead", {
     ...lead,
     receivedAt: new Date().toISOString(),
   });
@@ -105,16 +102,9 @@ export async function POST(request: Request) {
   if (!delivery.ok) {
     console.error("[better-built] lead email failed", delivery.reason);
 
-    /* Say so rather than showing a receipt for a message nobody got. A paid
-       customer is told their payment is safe; the thank-you page handles that
-       wording. */
+    /* Say so rather than showing a receipt for a message nobody got. */
     return NextResponse.json(
-      {
-        ok: false,
-        message: lead.paid
-          ? "Your payment went through, but your details didn't reach us."
-          : "That didn't send. Try again, or email us directly.",
-      },
+      { ok: false, message: "That didn't send. Try again, or email us directly." },
       { status: 502 },
     );
   }
