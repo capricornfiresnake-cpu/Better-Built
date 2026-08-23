@@ -65,7 +65,7 @@ export const websitePlan: PricingPlan = {
   ],
   cta: { label: "Build My Website", href: "/contact" },
   checkoutUrl: "https://buy.stripe.com/28E5kE0ifexaaSXe0a0co02",
-  checkoutLabel: "Start my website — $800",
+  checkoutLabel: "Start my website",
   checkoutVia: "brief",
   emphasis: "primary",
 };
