@@ -83,10 +83,12 @@ export default function TermsPage() {
                 paid for runs to its end and is not refunded part-way through.
               </li>
               <li>
-                <strong>Annual Plan, $89 per month billed annually.</strong> Full
-                refund within 14 days of payment if you have not yet asked for any
-                update work. After 14 days the year runs to its end and is not
-                refunded, though you can cancel the renewal at any point before it.
+                <strong>Annual Plan, $1,068 for the year.</strong> That is the
+                $89 monthly rate paid up front. Full refund within 14 days of
+                payment if you have not yet asked for any update work. After 14
+                days the year runs to its end and is not refunded. It does not
+                renew on its own — when the year is up, buying another is your
+                decision to make.
               </li>
               <li>
                 <strong>Domain and hosting.</strong> These are billed by the

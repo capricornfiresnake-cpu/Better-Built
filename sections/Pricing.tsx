@@ -238,7 +238,7 @@ export default function Pricing({
                       ) : null}
                     </div>
   
-                    <div className="mt-6 flex items-baseline gap-2.5">
+                    <div className="mt-6 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
                       <span className="numeral text-[2.75rem] text-chalk">{plan.price}</span>
                       <span className="text-[0.9375rem] text-slate">{plan.cadence}</span>
                       {plan.note ? (
