@@ -1,10 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useId, useState } from "react";
 
-import { Button, ButtonLink } from "@/components/ui/Button";
-import SecureNote from "@/components/ui/SecureNote";
+import { Button } from "@/components/ui/Button";
 import {
   checkoutUrlWith,
   industryOptions,
@@ -52,19 +50,21 @@ function Field({
  * Lead form. Posts JSON to `/api/lead`, which is the single place to wire up a
  * CRM, email automation, or SMS follow-up — no component changes needed.
  *
- * Every submission is delivered straight away, and everyone who sends one is
- * then offered the build checkout — the form is the front door to the $800
- * whichever page they arrived from. Whether the payment actually happened is a
- * question for the Stripe dashboard, which is what the reference carried on
- * the lead is for.
+ * The form is the front door to the $800 build. Answers are delivered first,
+ * then the browser goes straight to Stripe — there is no thank-you screen in
+ * between, because the Stripe page is the confirmation. Whether the payment
+ * actually happened is a question for the Stripe dashboard, which is what the
+ * reference carried on the lead is for.
+ *
+ * The success screen below is the fallback for a build with no checkout link
+ * configured. Clear websitePlan.checkoutUrl and the form goes back to being a
+ * plain enquiry form.
  */
 export default function ContactForm() {
   const id = useId();
   const [need, setNeed] = useState<string>(needOptions[0]);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
-  const [checkoutHref, setCheckoutHref] = useState<string | null>(null);
-
   /** True once the answers are safely on their way to the inbox. */
   async function deliver(answers: Answers): Promise<boolean> {
     setStatus("submitting");
@@ -112,9 +112,12 @@ export default function ContactForm() {
     if (!(await deliver({ ...answers, reference }))) return;
 
     if (buying) {
-      setCheckoutHref(
+      /* Leave for checkout without painting anything first. The status stays
+         "submitting", so the button remains disabled while the browser moves. */
+      window.location.assign(
         checkoutUrlWith(websitePlan, { email: answers.email, reference }),
       );
+      return;
     }
 
     setStatus("success");
@@ -134,39 +137,13 @@ export default function ContactForm() {
           We&rsquo;ll read through what you sent and come back with a few questions, a
           plan, and a timeline. If anything is urgent, reply to the email we send and it
           will reach us directly.
-        </p>
-        {/* Their details are already in, so paying is an option rather than a
-            toll gate. */}
-        {checkoutHref ? (
-          <div className="mt-9 border-t border-line pt-8">
-            <p className="max-w-[42ch] text-[0.9375rem] leading-relaxed text-slate">
-              Ready to start now? Paying the {websitePlan.price} puts your build in
-              the queue. No rush — we&rsquo;ll be in touch either way.
-            </p>
-            <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
-              <ButtonLink href={checkoutHref} size="lg" withArrow className="label-mono">
-                Pay {websitePlan.price} and start
-              </ButtonLink>
-              <SecureNote />
-            </div>
-            <p className="mt-6 text-[0.875rem] text-dim">
-              <Link
-                href="/terms#refunds"
-                className="link-underline transition-colors duration-300 hover:text-chalk"
-              >
-                Refunds and cancellations
-              </Link>
-            </p>
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setStatus("idle")}
-            className="link-underline label-mono mt-8 text-slate"
-          >
-            Send another project
-          </button>
-        )}
+        </p>        <button
+          type="button"
+          onClick={() => setStatus("idle")}
+          className="link-underline label-mono mt-8 text-slate"
+        >
+          Send another project
+        </button>
       </div>
     );
   }
@@ -310,8 +287,10 @@ export default function ContactForm() {
         >
           {status === "submitting" ? "Sending…" : "Start my project"}
         </Button>
-        <p className="max-w-[32ch] text-[0.875rem] leading-relaxed text-dim">
-          No obligation. We&rsquo;ll reply with questions and a timeline.
+        <p className="max-w-[34ch] text-[0.875rem] leading-relaxed text-dim">
+          {websitePlan.checkoutUrl
+            ? "Sending this takes you to secure checkout by Stripe. We'll reply either way."
+            : "No obligation. We'll reply with questions and a timeline."}
         </p>
       </div>
 
