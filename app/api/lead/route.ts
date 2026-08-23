@@ -15,6 +15,11 @@ import { NextResponse } from "next/server";
  *   - Webhook  → Zapier / Make, if the funnel lives there
  *
  * Keep the validation above it — it is what stops junk reaching the CRM.
+ *
+ * NOTHING IS DELIVERED YET. The step below writes to the server log and stops
+ * there, which on Vercel means the function logs and nobody's inbox. Until a
+ * real destination is wired in, every lead — paid ones included — is only as
+ * visible as those logs.
  */
 
 export const runtime = "nodejs";
@@ -28,6 +33,14 @@ type LeadPayload = {
   website: string;
   need: string;
   details: string;
+  /**
+   * True when the brief arrived after checkout rather than instead of it.
+   * It means "came back through the success page", not "Stripe confirmed the
+   * payment" — Stripe is the record of that.
+   */
+  paid: boolean;
+  /** Matches the client_reference_id on the Stripe payment, when there is one. */
+  reference: string;
   /** Honeypot. Any value means a bot filled it. */
   companyUrl?: string;
 };
@@ -66,6 +79,8 @@ export async function POST(request: Request) {
     website: asString(raw.website),
     need: asString(raw.need),
     details: asString(raw.details).slice(0, 4000),
+    paid: raw.paid === true,
+    reference: asString(raw.reference).slice(0, 200),
   };
 
   if (!lead.name) {
@@ -85,7 +100,7 @@ export async function POST(request: Request) {
   // --- Deliver -------------------------------------------------------------
   // Replace this with the real destination. Until then the lead is logged so
   // nothing is silently lost in development.
-  console.info("[better-built] new lead", {
+  console.info(lead.paid ? "[better-built] PAID lead" : "[better-built] new lead", {
     ...lead,
     receivedAt: new Date().toISOString(),
   });

@@ -3,33 +3,11 @@ import Link from "next/link";
 import AnimatedText from "@/components/ui/AnimatedText";
 import Reveal from "@/components/ui/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
+import SecureNote from "@/components/ui/SecureNote";
 import { Container, Eyebrow, Section, Ticks } from "@/components/ui/Section";
 import DigitalGrid from "@/components/visuals/DigitalGrid";
 import { planAction, supportPlans, websitePlan } from "@/data/pricing";
 import { cn } from "@/lib/utils";
-
-/**
- * Shown only beside a button that takes a card, so nobody is told about
- * secure checkout on a button that just opens the contact form.
- */
-function SecureNote() {
-  return (
-    <span className="label-mono-sm inline-flex items-center gap-2 text-dim">
-      <svg
-        viewBox="0 0 12 12"
-        aria-hidden="true"
-        className="h-3 w-3 shrink-0 text-accent-lift"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.4"
-      >
-        <rect x="2.2" y="5.2" width="7.6" height="5.2" />
-        <path d="M4 5.2V3.6a2 2 0 0 1 4 0v1.6" />
-      </svg>
-      Secure checkout by Stripe
-    </span>
-  );
-}
 
 /** What the one-time price actually buys, in three words. */
 const delivery = ["Designed", "Built", "Launched"];
@@ -157,6 +135,11 @@ export default function Pricing({
                       {buildAction.label}
                     </ButtonLink>
                     {buildAction.paying ? <SecureNote /> : null}
+                    {buildAction.viaBrief ? (
+                      <span className="label-mono-sm text-dim">
+                        A few questions first, then payment
+                      </span>
+                    ) : null}
                   </div>
 
                   <p className="mt-7 max-w-[38ch] text-[0.875rem] leading-relaxed text-dim">

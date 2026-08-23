@@ -1,12 +1,22 @@
 "use client";
 
+import Link from "next/link";
 import { useId, useState } from "react";
 
-import { Button } from "@/components/ui/Button";
-import { industryOptions, needOptions } from "@/data/pricing";
+import { Button, ButtonLink } from "@/components/ui/Button";
+import SecureNote from "@/components/ui/SecureNote";
+import {
+  checkoutUrlWith,
+  industryOptions,
+  needOptions,
+  websitePlan,
+} from "@/data/pricing";
+import { clearLead, newReference, stashLead } from "@/lib/leadHandoff";
 import { cn } from "@/lib/utils";
 
-type Status = "idle" | "submitting" | "success" | "error";
+type Status = "idle" | "submitting" | "checkout" | "success" | "error";
+
+type Answers = Record<string, string>;
 
 const fieldBase =
   "w-full rounded-none border-0 border-b border-line bg-transparent px-0 pb-2.5 pt-1 " +
@@ -41,26 +51,30 @@ function Field({
 /**
  * Lead form. Posts JSON to `/api/lead`, which is the single place to wire up a
  * CRM, email automation, or SMS follow-up — no component changes needed.
+ *
+ * Arriving with `?plan=website` means the visitor came from a pricing button to
+ * buy, not to ask. The answers are then held back and only delivered once the
+ * customer returns from Stripe, so a brief that was never paid for never lands
+ * in the inbox. See lib/leadHandoff for what that does and does not guarantee.
  */
 export default function ContactForm() {
   const id = useId();
   const [need, setNeed] = useState<string>(needOptions[0]);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [checkout, setCheckout] = useState<{ href: string; answers: Answers } | null>(
+    null,
+  );
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function deliver(answers: Answers) {
     setStatus("submitting");
     setError(null);
-
-    const form = event.currentTarget;
-    const payload = Object.fromEntries(new FormData(form).entries());
 
     try {
       const response = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(answers),
       });
 
       if (!response.ok) {
@@ -70,7 +84,6 @@ export default function ContactForm() {
         throw new Error(data?.message ?? "That didn't send.");
       }
 
-      form.reset();
       setStatus("success");
     } catch (submitError) {
       setStatus("error");
@@ -80,6 +93,87 @@ export default function ContactForm() {
           : "That didn't send. Try again, or email us directly.",
       );
     }
+  }
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const answers = Object.fromEntries(
+      new FormData(event.currentTarget).entries(),
+    ) as Answers;
+
+    /* Read at submit time rather than on render: it keeps the page static and
+       there is no hydration mismatch to worry about. */
+    const plan = new URLSearchParams(window.location.search).get("plan");
+
+    if (plan === websitePlan.id && websitePlan.checkoutUrl) {
+      const reference = newReference();
+      stashLead({ ...answers, reference });
+      setCheckout({
+        href: checkoutUrlWith(websitePlan, { email: answers.email, reference }),
+        answers,
+      });
+      setStatus("checkout");
+      return;
+    }
+
+    await deliver(answers);
+  }
+
+  /* Someone who wants to talk before paying is a lead, not a lost sale. Their
+     answers go through now, and the stashed copy is dropped so the thank-you
+     page cannot send them a second time. */
+  async function sendWithoutPaying(answers: Answers) {
+    clearLead();
+    await deliver(answers);
+  }
+
+  /* Stays mounted while the "send without paying" request is in flight, so
+     the form does not flash back in underneath it. */
+  if (checkout && status !== "success") {
+    return (
+      <div className="rounded-lg border border-line bg-card p-[clamp(1.75rem,4vw,3rem)]">
+        <p className="label-mono text-accent-lift">Last step</p>
+        <h2 className="display-lg mt-6 max-w-[18ch] text-chalk">
+          Pay {websitePlan.price} and we start.
+        </h2>
+        <p className="mt-6 max-w-[46ch] text-[1.0625rem] leading-relaxed text-slate">
+          Your answers are ready. They reach us the moment the payment goes
+          through, and we come back with questions, a plan, and a timeline.
+        </p>
+
+        <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <ButtonLink href={checkout.href} size="lg" withArrow className="label-mono">
+            Pay {websitePlan.price} and start
+          </ButtonLink>
+          <SecureNote />
+        </div>
+
+        <p className="mt-7 text-[0.875rem] text-dim">
+          <Link
+            href="/terms#refunds"
+            className="link-underline transition-colors duration-300 hover:text-chalk"
+          >
+            Refunds and cancellations
+          </Link>
+        </p>
+
+        <div className="mt-8 border-t border-line pt-6">
+          <button
+            type="button"
+            onClick={() => sendWithoutPaying(checkout.answers)}
+            disabled={status === "submitting"}
+            className="link-underline label-mono text-slate transition-colors duration-300 hover:text-chalk"
+          >
+            Rather talk first? Send this without paying
+          </button>
+        </div>
+
+        <p role="status" aria-live="polite" className="min-h-5 text-[0.9375rem]">
+          {error ? <span className="text-accent-lift">{error}</span> : null}
+        </p>
+      </div>
+    );
   }
 
   if (status === "success") {

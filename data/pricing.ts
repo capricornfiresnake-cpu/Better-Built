@@ -34,6 +34,12 @@ export type PricingPlan = {
   checkoutUrl?: string;
   /** Button label once money actually changes hands. */
   checkoutLabel?: string;
+  /**
+   * "stripe" sends the button straight to checkout. "brief" sends it to the
+   * questions first and hands off to Stripe from there, so the answers arrive
+   * with the payment instead of ahead of it.
+   */
+  checkoutVia?: "stripe" | "brief";
   emphasis: "primary" | "support";
   /** Marks the better-value ongoing plan. Only ever one. */
   highlight?: string;
@@ -59,7 +65,8 @@ export const websitePlan: PricingPlan = {
   ],
   cta: { label: "Build My Website", href: "/contact" },
   checkoutUrl: "https://buy.stripe.com/28E5kE0ifexaaSXe0a0co02",
-  checkoutLabel: "Pay $800 and start",
+  checkoutLabel: "Start my website — $800",
+  checkoutVia: "brief",
   emphasis: "primary",
 };
 
@@ -139,12 +146,45 @@ export const industryOptions = [
 export function planAction(plan: PricingPlan): {
   href: string;
   label: string;
+  /** True only when the button itself opens Stripe. */
   paying: boolean;
+  /** True when the button opens the brief that leads to Stripe. */
+  viaBrief: boolean;
 } {
-  const paying = Boolean(plan.checkoutUrl);
-  return {
-    href: paying ? (plan.checkoutUrl as string) : plan.cta.href,
-    label: paying ? (plan.checkoutLabel ?? plan.cta.label) : plan.cta.label,
-    paying,
-  };
+  if (!plan.checkoutUrl) {
+    return { href: plan.cta.href, label: plan.cta.label, paying: false, viaBrief: false };
+  }
+
+  const label = plan.checkoutLabel ?? plan.cta.label;
+
+  if (plan.checkoutVia === "brief") {
+    return {
+      href: `${plan.cta.href}?plan=${plan.id}`,
+      label,
+      paying: false,
+      viaBrief: true,
+    };
+  }
+
+  return { href: plan.checkoutUrl, label, paying: true, viaBrief: false };
+}
+
+/**
+ * The checkout URL with the customer's email prefilled and a reference that
+ * ties the Stripe payment back to the brief they just filled in. Both are
+ * plain query parameters that Stripe Payment Links accept.
+ */
+export function checkoutUrlWith(
+  plan: PricingPlan,
+  { email, reference }: { email?: string; reference?: string },
+): string {
+  const base = plan.checkoutUrl;
+  if (!base) return plan.cta.href;
+
+  const params = new URLSearchParams();
+  if (email) params.set("prefilled_email", email);
+  if (reference) params.set("client_reference_id", reference);
+
+  const query = params.toString();
+  return query ? `${base}?${query}` : base;
 }
