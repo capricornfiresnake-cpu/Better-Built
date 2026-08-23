@@ -112,13 +112,11 @@ export const supportPlans: PricingPlan[] = [
   },
 ];
 
-/** Contact form options — kept short on purpose. */
-export const needOptions = [
-  "New website",
-  "Website redesign",
-  "Website updates",
-  "Not sure yet",
-] as const;
+/**
+ * Contact form options. Both end at the same place — a build — which is why
+ * sending the form goes straight to the build checkout.
+ */
+export const needOptions = ["New website", "Website redesign"] as const;
 
 export type NeedOption = (typeof needOptions)[number];
 

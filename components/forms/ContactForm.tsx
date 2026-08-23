@@ -234,7 +234,7 @@ export default function ContactForm() {
 
       <fieldset>
         <legend className="label-mono text-dim">What do you need?</legend>
-        <div className="mt-4 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
           {needOptions.map((option) => (
             <label
               key={option}
