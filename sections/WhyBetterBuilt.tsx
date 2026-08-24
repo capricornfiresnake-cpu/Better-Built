@@ -1,3 +1,4 @@
+import ServiceTransformation from "@/components/services/ServiceTransformation";
 import AnimatedText from "@/components/ui/AnimatedText";
 import Reveal from "@/components/ui/Reveal";
 import { Container, Eyebrow, Section } from "@/components/ui/Section";
@@ -79,6 +80,12 @@ export default function WhyBetterBuilt({
             </li>
           ))}
         </ul>
+
+        <Reveal delay={120}>
+          <div className="mx-auto mt-[clamp(3rem,6vw,5rem)] max-w-[860px]">
+            <ServiceTransformation id="design" name="Custom Website Design" />
+          </div>
+        </Reveal>
       </Container>
     </Section>
   );
