@@ -89,27 +89,6 @@ export const supportPlans: PricingPlan[] = [
     checkoutLabel: "Subscribe — $125/mo",
     emphasis: "support",
   },
-  {
-    id: "annual",
-    name: "Annual Plan",
-    price: "$89",
-    cadence: "per month",
-    /* The rate is per month, but the charge is one payment for the year, so
-       the real number has to be on the card and not just at checkout. */
-    note: "$1,068 billed once",
-    description:
-      "The same ongoing support at a lower rate, for businesses that already know they want it. Paid up front for the year — it does not renew on its own.",
-    includes: [
-      "Everything in Website Updates",
-      "Priority turnaround on changes",
-      "Yearly review of the site",
-    ],
-    cta: { label: "Choose annual", href: "/contact" },
-    checkoutUrl: "https://buy.stripe.com/fZufZi7KHcp2e593lw0co01",
-    checkoutLabel: "Pay for the year",
-    emphasis: "support",
-    highlight: "Better value",
-  },
 ];
 
 /**

@@ -42,7 +42,6 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
     links: [
       { label: "Website — $800", href: "/pricing#website" },
       { label: "Updates — $125/mo", href: "/pricing#updates" },
-      { label: "Annual — $89/mo", href: "/pricing#annual" },
       { label: "Questions", href: "/process#faq" },
     ],
   },

@@ -47,7 +47,7 @@ export default function WhyBetterBuilt({
             <div className="max-w-[46ch] space-y-5 text-[1.0625rem] leading-relaxed text-slate">
               <p>
                 Most people meet a business online before they ever meet it in person.
-                If that first look is slow, confusing, or ten years old, it quietly
+                If that first look is slow, confusing, or outdated, it quietly
                 costs work the business already earned.
               </p>
               <p className="text-chalk">

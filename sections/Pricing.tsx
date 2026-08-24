@@ -199,7 +199,12 @@ export default function Pricing({
               <p className="label-mono text-dim">Optional, after launch</p>
             </Reveal>
   
-            <div className="mt-6 grid gap-5 md:grid-cols-2">
+            <div
+              className={cn(
+                "mt-6 grid gap-5",
+                supportPlans.length > 1 ? "md:grid-cols-2" : "max-w-[34rem]",
+              )}
+            >
               {supportPlans.map((plan, i) => (
                 <Reveal key={plan.id} delay={i * 80}>
                   <div
