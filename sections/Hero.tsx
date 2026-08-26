@@ -9,7 +9,7 @@ import { featuredProjects } from "@/data/projects";
 
 export default function Hero() {
   return (
-    <section className="sheet relative overflow-hidden bg-void pt-[clamp(6.5rem,12vw,9rem)] pb-[clamp(4rem,8vw,7rem)]">
+    <section className="sheet relative overflow-hidden bg-void pt-[clamp(6.5rem,12vw,9rem)] pb-[clamp(2rem,4vw,3.25rem)]">
       {/*
         Drop-in point for a generated motion asset. With no `src` this renders
         nothing and the hero is exactly as designed — the CSS layers below are

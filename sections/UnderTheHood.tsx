@@ -52,8 +52,10 @@ const FACETS: { title: string; note: string; items: string[] }[] = [
 
 export default function UnderTheHood({
   surface = "void",
+  className,
 }: {
   surface?: "void" | "deck";
+  className?: string;
 }) {
   const listRef = useRef<HTMLUListElement>(null);
   const [active, setActive] = useState(0);
@@ -95,7 +97,7 @@ export default function UnderTheHood({
   }, []);
 
   return (
-    <Section surface={surface} id="under-the-hood" rule>
+    <Section surface={surface} id="under-the-hood" rule className={className}>
       {/* Asset 3 slot — the blueprint. Inert without a src. */}
       <MotionBackground opacity={0.22} overlayClassName="bg-void/75" />
 

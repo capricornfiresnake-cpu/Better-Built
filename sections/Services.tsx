@@ -11,11 +11,13 @@ import { services } from "@/data/services";
  */
 export default function Services({
   surface = "void",
+  className,
 }: {
   surface?: "void" | "deck";
+  className?: string;
 }) {
   return (
-    <Section surface={surface} id="services" rule>
+    <Section surface={surface} id="services" rule className={className}>
       <Container>
         <div className="grid gap-x-14 gap-y-10 lg:grid-cols-12">
           <Reveal className="lg:col-span-4">

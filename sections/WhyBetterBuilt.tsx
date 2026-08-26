@@ -25,11 +25,13 @@ const outcomes = [
 
 export default function WhyBetterBuilt({
   surface = "void",
+  className,
 }: {
   surface?: "void" | "deck";
+  className?: string;
 }) {
   return (
-    <Section surface={surface} id="why" rule>
+    <Section surface={surface} id="why" rule className={className}>
       <Container>
         <div className="grid gap-x-14 gap-y-10 lg:grid-cols-12">
           <div className="lg:col-span-6">

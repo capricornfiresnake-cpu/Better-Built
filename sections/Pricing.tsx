@@ -62,16 +62,18 @@ function OwnershipFlow() {
 export default function Pricing({
   surface = "deck",
   showSupport = true,
+  className,
 }: {
   surface?: "void" | "deck";
   /** The homepage states the one-time price and stops there; /pricing carries
       the ongoing plans. */
   showSupport?: boolean;
+  className?: string;
 }) {
   const buildAction = planAction(websitePlan);
 
   return (
-    <Section surface={surface} id="pricing" rule>
+    <Section surface={surface} id="pricing" rule className={className}>
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-8">
           <div>

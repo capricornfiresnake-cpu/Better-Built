@@ -18,14 +18,21 @@ import Pricing from "@/sections/Pricing";
  * the footer carries its own top rule and glow. The closing ask lives there,
  * shared by every page.
  */
+/**
+ * The stacked homepage sheets sit closer together than the section default, so
+ * the page reads as one argument rather than a stack of distant slides. Scoped
+ * here on purpose — it must not touch Pricing on /pricing.
+ */
+const tightSections = "[--spacing-section:clamp(2.5rem,5vw,4rem)]";
+
 export default function HomePage() {
   return (
     <>
       <Hero />
-      <WhyBetterBuilt surface="deck" />
-      <Services />
-      <UnderTheHood surface="deck" />
-      <Pricing surface="void" showSupport={false} />
+      <WhyBetterBuilt surface="deck" className={tightSections} />
+      <Services className={tightSections} />
+      <UnderTheHood surface="deck" className={tightSections} />
+      <Pricing surface="void" showSupport={false} className={tightSections} />
     </>
   );
 }
