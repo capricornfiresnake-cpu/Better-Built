@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import Reveal from "@/components/ui/Reveal";
+import { useInView } from "@/components/ui/useInView";
 import MotionBackground from "@/components/visuals/MotionBackground";
 import { Container, Eyebrow, Section } from "@/components/ui/Section";
 import { cn } from "@/lib/utils";
@@ -56,6 +57,9 @@ export default function UnderTheHood({
 }) {
   const listRef = useRef<HTMLUListElement>(null);
   const [active, setActive] = useState(0);
+  const { ref: panelRef, inView: panelIn } = useInView<HTMLDivElement>({
+    threshold: 0.33,
+  });
 
   /**
    * The active discipline follows the scroll rather than a click. Nothing is
@@ -174,11 +178,15 @@ export default function UnderTheHood({
             </ul>
           </div>
 
-          <Reveal
-            delay={120}
-            className="min-w-0 lg:col-span-8 lg:sticky lg:top-28 lg:self-start"
-          >
-            <div className="relative aspect-3/2 overflow-hidden rounded-lg border border-line bg-card">
+          <div className="min-w-0 lg:col-span-8 lg:sticky lg:top-28 lg:self-start">
+            <div
+              ref={panelRef}
+              className={cn(
+                "relative aspect-3/2 overflow-hidden rounded-lg border border-line bg-card",
+                "transition-opacity duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+                panelIn ? "opacity-100" : "opacity-0",
+              )}
+            >
               <Image
                 src="/images/performance-fast.png"
                 alt="A speedometer reading fast, with a load time of 1.2 seconds fully loaded, beside the four things that decide whether a page waits: pre-rendered pages, optimised and lazy-loaded images, no animation library, and SEO foundations."
@@ -188,7 +196,7 @@ export default function UnderTheHood({
                 className="object-cover"
               />
             </div>
-          </Reveal>
+          </div>
         </div>
       </Container>
     </Section>
