@@ -38,6 +38,9 @@ export default function ServiceTransformation({
     threshold: 0,
     rootMargin: "250px 0px",
   });
+  const { ref: stillRef, inView: stillIn } = useInView<HTMLElement>({
+    threshold: 0.3,
+  });
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const [src, setSrc] = useState<string | null>(null);
@@ -80,7 +83,14 @@ export default function ServiceTransformation({
 
   if (media.still) {
     return (
-      <figure ref={ref} className={cn("group/media w-full", className)}>
+      <figure
+        ref={stillRef}
+        className={cn(
+          "group/media w-full transition-opacity duration-[1500ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+          stillIn ? "opacity-100" : "opacity-0",
+          className,
+        )}
+      >
         <div
           className={cn(
             "relative mx-auto max-w-[440px] overflow-hidden rounded-lg border border-line bg-card",
