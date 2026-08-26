@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import Reveal from "@/components/ui/Reveal";
@@ -378,7 +379,20 @@ export default function UnderTheHood({
           </div>
 
           <Reveal delay={80} className="min-w-0 lg:col-span-7">
-            <Diagram active={active} />
+            {active === "performance" ? (
+              <div className="relative aspect-3/2 overflow-hidden rounded-lg border border-line bg-card">
+                <Image
+                  src="/images/performance-fast.png"
+                  alt="A speedometer reading fast, with a load time of 1.2 seconds fully loaded, beside the four things that decide whether a page waits: pre-rendered pages, optimised and lazy-loaded images, no animation library, and SEO foundations."
+                  fill
+                  sizes="(min-width: 1024px) 56vw, 100vw"
+                  quality={90}
+                  className="object-cover"
+                />
+              </div>
+            ) : (
+              <Diagram active={active} />
+            )}
           </Reveal>
         </div>
       </Container>
