@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import ServiceVisual from "./ServiceVisual";
@@ -50,7 +51,7 @@ export default function ServiceTransformation({
    * which would be a strange thing for this particular business to ship.
    */
   useEffect(() => {
-    if (!media || !inView || failed) return;
+    if (!media || !media.src || !inView || failed) return;
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -77,6 +78,38 @@ export default function ServiceTransformation({
     return <ServiceVisual id={id} />;
   }
 
+  if (media.still) {
+    return (
+      <figure ref={ref} className={cn("group/media w-full", className)}>
+        <div
+          className={cn(
+            "relative mx-auto max-w-[440px] overflow-hidden rounded-lg border border-line bg-card",
+            "transition-[transform,border-color] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
+            "motion-safe:group-hover/media:scale-[1.012] group-hover/media:border-line-hard",
+          )}
+          style={{ aspectRatio: media.stillAspect ?? "3 / 4" }}
+        >
+          <Image
+            src={media.still}
+            alt={media.alt}
+            fill
+            sizes="(min-width: 1024px) 440px, 100vw"
+            quality={90}
+            className="object-cover"
+          />
+          <span
+            aria-hidden="true"
+            className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/media:scale-x-100"
+            style={{ backgroundColor: media.accent }}
+          />
+        </div>
+        <figcaption className="label-mono-sm mt-3 text-center text-dim">
+          {media.caption}
+        </figcaption>
+      </figure>
+    );
+  }
+
   const showVideo = Boolean(src) && !failed;
 
   return (
@@ -91,14 +124,16 @@ export default function ServiceTransformation({
       >
         {/* The poster is always painted. It is the fallback for reduced
             motion, Save-Data, a decoded-but-not-playing video, and failure. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={media.poster}
-          alt={media.alt}
-          loading="lazy"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+        {media.poster ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={media.poster}
+            alt={media.alt}
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : null}
 
         {showVideo ? (
           <video

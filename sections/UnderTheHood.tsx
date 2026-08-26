@@ -190,8 +190,8 @@ export default function UnderTheHood({
               )}
             >
               <Image
-                src="/images/performance-fast.png"
-                alt="A speedometer reading fast, with a load time of 1.2 seconds fully loaded, beside the four things that decide whether a page waits: pre-rendered pages, optimised and lazy-loaded images, no animation library, and SEO foundations."
+                src="/images/performance-news.png"
+                alt="The Better Built system on one panel — Design, Development, Responsive and Performance, each with its parts listed, and a speedometer reading 1.2 seconds fully loaded."
                 fill
                 sizes="(min-width: 1024px) 64vw, 100vw"
                 quality={90}

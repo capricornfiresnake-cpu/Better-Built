@@ -18,10 +18,18 @@
  */
 
 export type ServiceMedia = {
+  /**
+   * A finished still instead of a transformation video. When set, the service
+   * renders this image and nothing else — no video, no before/after labels.
+   * Portrait or landscape; the frame follows `stillAspect`.
+   */
+  still?: string;
+  /** Aspect ratio for a `still`, as a CSS `aspect-ratio` value. Defaults to 3 / 4. */
+  stillAspect?: string;
   /** Path under /public. Omit the entry entirely rather than passing an empty string. */
-  src: string;
+  src?: string;
   /** First frame, shown before the video loads and wherever it never loads. */
-  poster: string;
+  poster?: string;
   /** Optional lighter file for phones. Falls back to `src`. */
   srcMobile?: string;
   /** Dominant colour of the footage. */
@@ -47,6 +55,19 @@ export const serviceMedia: Record<string, ServiceMedia> = {
     accent: "#c8a368",
     caption: "A 2004 layout, rebuilt for 2026",
     alt: "A dated 2004 construction-company homepage rebuilding section by section into a modern one: a dark header, a full-width photograph of a lit timber house, and a clear quote button.",
+  },
+
+  /**
+   * Mobile-first development, shown as one build across a monitor, a tablet and
+   * a phone rather than as a diagram. A still, not a video — there is no
+   * before/after to play.
+   */
+  mobile: {
+    still: "/images/services/bakery.png",
+    stillAspect: "896 / 1200",
+    accent: "#c9a27a",
+    caption: "One build, every screen",
+    alt: "A bakery website shown together on a desktop monitor, a tablet and a phone — each laid out for its own screen, with bread and pastry photography, a product gallery, and a baker at work.",
   },
 };
 
