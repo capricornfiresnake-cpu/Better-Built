@@ -314,7 +314,7 @@ export default function UnderTheHood({
         </div>
 
         <div className="mt-[clamp(2.5rem,5vw,4rem)] grid gap-x-14 gap-y-10 lg:grid-cols-12">
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-4">
             <ul ref={listRef} className="border-t border-line">
               {FACETS.map((facet) => {
                 const on = facet.key === active;
@@ -333,7 +333,7 @@ export default function UnderTheHood({
                         on ? "scale-x-100" : "scale-x-0",
                       )}
                     />
-                    <div className="px-1 py-6 sm:px-4">
+                    <div className="px-1 py-6 sm:px-4 lg:py-11">
                       <h3 className="flex items-baseline gap-3">
                         <span
                           aria-hidden="true"
@@ -378,21 +378,31 @@ export default function UnderTheHood({
             </ul>
           </div>
 
-          <Reveal delay={80} className="min-w-0 lg:col-span-7">
-            {active === "performance" ? (
-              <div className="relative aspect-3/2 overflow-hidden rounded-lg border border-line bg-card">
+          <Reveal delay={80} className="min-w-0 lg:col-span-8 lg:sticky lg:top-28 lg:self-start">
+            <div className="relative">
+              <Diagram active={active} />
+
+              {/* Always mounted, so it decodes early and crossfades in rather
+                  than popping. When lit it fully covers the diagram beneath. */}
+              <div
+                className={cn(
+                  "absolute inset-0 overflow-hidden rounded-lg border border-line bg-card",
+                  "transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                  active === "performance"
+                    ? "opacity-100"
+                    : "pointer-events-none opacity-0",
+                )}
+              >
                 <Image
                   src="/images/performance-fast.png"
                   alt="A speedometer reading fast, with a load time of 1.2 seconds fully loaded, beside the four things that decide whether a page waits: pre-rendered pages, optimised and lazy-loaded images, no animation library, and SEO foundations."
                   fill
-                  sizes="(min-width: 1024px) 56vw, 100vw"
+                  sizes="(min-width: 1280px) 64vw, (min-width: 1024px) 56vw, 100vw"
                   quality={90}
                   className="object-cover"
                 />
               </div>
-            ) : (
-              <Diagram active={active} />
-            )}
+            </div>
           </Reveal>
         </div>
       </Container>
