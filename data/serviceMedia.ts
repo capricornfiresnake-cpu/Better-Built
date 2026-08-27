@@ -93,6 +93,18 @@ export const serviceMedia: Record<string, ServiceMedia> = {
     caption: "Structured so search engines can read it",
     alt: "A home-remodeling company's website on a desktop monitor — a hero kitchen photograph, a project gallery, and a grid of named services such as kitchen remodeling, bathroom renovations and flooring installation.",
   },
+
+  /**
+   * Website launch, shown as a finished coffee-shop site live on screen — the
+   * moment the work goes public. A still, not a video.
+   */
+  launch: {
+    still: "/images/services/cof.png",
+    stillAspect: "896 / 1200",
+    accent: "#a97c50",
+    caption: "The finished site, live",
+    alt: "A coffee shop's website on a desktop monitor — a hero photograph of a barista pouring a latte, a strip of café and pastry photography, and a typography and storefront section below.",
+  },
 };
 
 export function getServiceMedia(id: string): ServiceMedia | undefined {
