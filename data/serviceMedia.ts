@@ -105,6 +105,18 @@ export const serviceMedia: Record<string, ServiceMedia> = {
     caption: "The finished site, live",
     alt: "A coffee shop's website on a desktop monitor — a hero photograph of a barista pouring a latte, a strip of café and pastry photography, and a typography and storefront section below.",
   },
+
+  /**
+   * Ongoing updates, shown as a live resort site mid-change — a new section
+   * being added while an "updating" bar runs. A still, not a video.
+   */
+  updates: {
+    still: "/images/services/final.png",
+    stillAspect: "896 / 1200",
+    accent: "#c2a15e",
+    caption: "A new section, added after launch",
+    alt: "A luxury resort's website on a desktop monitor — a gallery of rooms and pools, a newly announced rooftop-terrace feature panel, and a small updating progress bar running in the corner.",
+  },
 };
 
 export function getServiceMedia(id: string): ServiceMedia | undefined {
