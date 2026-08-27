@@ -81,6 +81,18 @@ export const serviceMedia: Record<string, ServiceMedia> = {
     caption: "A layout built to turn visits into quotes",
     alt: "A landscaping company's website on a desktop monitor — a hero photograph of a finished backyard with a firepit and lawn, a before-and-after gallery of projects, reviews with trust badges, and a request-a-quote form.",
   },
+
+  /**
+   * SEO foundations, shown as a home-remodeling site structured to be found —
+   * clear headings, a gallery, and named services. A still, not a video.
+   */
+  seo: {
+    still: "/images/services/house.png",
+    stillAspect: "896 / 1200",
+    accent: "#6f8fd0",
+    caption: "Structured so search engines can read it",
+    alt: "A home-remodeling company's website on a desktop monitor — a hero kitchen photograph, a project gallery, and a grid of named services such as kitchen remodeling, bathroom renovations and flooring installation.",
+  },
 };
 
 export function getServiceMedia(id: string): ServiceMedia | undefined {
