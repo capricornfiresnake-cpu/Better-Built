@@ -11,7 +11,7 @@ export const site = {
     "Better Built designs and builds modern, fast, mobile-first websites for businesses in any industry — built to look credible and bring in customers.",
   /** Update this when a custom domain replaces the Vercel one. */
   url: "https://better-built.vercel.app",
-  email: "capricornfiresnake@gmail.com",
+  email: "betterbuiltweb@gmail.com",
   phone: "",
   locale: "en_US",
 } as const;
