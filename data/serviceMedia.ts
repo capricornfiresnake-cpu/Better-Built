@@ -69,6 +69,18 @@ export const serviceMedia: Record<string, ServiceMedia> = {
     caption: "One build, every screen",
     alt: "A bakery website shown together on a desktop monitor, a tablet and a phone — each laid out for its own screen, with bread and pastry photography, a product gallery, and a baker at work.",
   },
+
+  /**
+   * Conversion-focused design, shown as a landscaping site whose whole layout
+   * drives toward a quote. A still, not a video.
+   */
+  conversion: {
+    still: "/images/services/lands.png",
+    stillAspect: "896 / 1200",
+    accent: "#8aa66a",
+    caption: "A layout built to turn visits into quotes",
+    alt: "A landscaping company's website on a desktop monitor — a hero photograph of a finished backyard with a firepit and lawn, a before-and-after gallery of projects, reviews with trust badges, and a request-a-quote form.",
+  },
 };
 
 export function getServiceMedia(id: string): ServiceMedia | undefined {
