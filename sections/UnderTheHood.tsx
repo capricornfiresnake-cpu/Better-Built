@@ -190,8 +190,8 @@ export default function UnderTheHood({
               )}
             >
               <Image
-                src="/images/performance-news.png"
-                alt="The Better Built system on one panel — Design, Development, Responsive and Performance, each with its parts listed, and a speedometer reading 1.2 seconds fully loaded."
+                src="/images/performance-panel.png"
+                alt="The Better Built system on one panel — Design, Development, Responsive and Performance, each with its parts listed and a speed gauge for performance."
                 fill
                 sizes="(min-width: 1024px) 64vw, 100vw"
                 quality={90}
