@@ -8,7 +8,7 @@ import { pageMeta } from "@/lib/seo";
 export const metadata = pageMeta({
   title: "Process",
   description:
-    "How a Better Built website gets made: one conversation, a build, a review, and a launch — usually two to three weeks from start to live.",
+    "How a Better Built website gets made: from the first conversation to a live site — usually within 2–3 weeks.",
   path: "/process",
 });
 
@@ -48,7 +48,7 @@ export default function ProcessPage() {
       <PageHeader
         eyebrow="Process"
         lines={["Process"]}
-        lede="Most business websites launch two to three weeks after the first conversation. Here's exactly what happens in between."
+        lede="Most business websites are ready to launch within 2–3 weeks of the first conversation. Here's exactly what happens in between."
         meta={[
           { label: "Stages", value: "Four" },
           { label: "Typical duration", value: "2–3 weeks" },

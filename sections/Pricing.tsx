@@ -84,12 +84,13 @@ export default function Pricing({
               as="h2"
               className="display-xl mt-7 text-chalk"
               lines={["One website.", "One price."]}
+              label="One website. One price."
             />
           </div>
           <Reveal delay={140}>
             <p className="max-w-[34ch] text-[1.0625rem] leading-relaxed text-slate">
-              The number is the number. Ongoing support is a separate decision you can
-              make later, or never.
+              The number is the number — no packages, no add-ons, no hidden build fees.
+              Ongoing support is a separate decision you can make later, or never.
             </p>
           </Reveal>
         </div>
@@ -145,8 +146,8 @@ export default function Pricing({
                   </div>
 
                   <p className="mt-7 max-w-[38ch] text-[0.875rem] leading-relaxed text-dim">
-                    Hosting and the domain are set up in your name — those are billed by
-                    the provider, not by us.
+                    Your domain remains yours. We handle the setup, deployment, and
+                    technical connection for you.
                   </p>
                   <p className="mt-3 text-[0.875rem] text-dim">
                     <Link

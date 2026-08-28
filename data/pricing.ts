@@ -74,15 +74,17 @@ export const websitePlan: PricingPlan = {
 export const supportPlans: PricingPlan[] = [
   {
     id: "updates",
-    name: "Website Updates",
+    name: "Website Care",
     price: "$125",
     cadence: "per month",
     description:
-      "Send us changes and we make them. Month to month, cancel whenever.",
+      "Send us changes and we make them, month to month. Larger redesigns and new pages are quoted separately.",
     includes: [
       "Content and photo updates",
-      "New sections and pages",
-      "Ongoing maintenance",
+      "Minor design changes",
+      "Website maintenance",
+      "Hosting support",
+      "Priority support",
     ],
     cta: { label: "Add ongoing updates", href: "/contact" },
     checkoutUrl: "https://buy.stripe.com/6oU00k9SPfBe8KPg8i0co00",

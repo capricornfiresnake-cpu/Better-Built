@@ -22,7 +22,7 @@ export default function Process({
           </Reveal>
           <Reveal delay={100}>
             <p className="max-w-[36ch] text-[1.0625rem] leading-relaxed text-slate">
-              Most websites launch in two to three weeks. You&rsquo;ll know where the
+              Most websites are ready to launch within 2&ndash;3 weeks. You&rsquo;ll know where the
               project stands the whole way through.
             </p>
           </Reveal>

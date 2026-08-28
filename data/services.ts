@@ -93,25 +93,31 @@ export type ProcessStep = {
 export const processSteps: ProcessStep[] = [
   {
     title: "Tell Us About Your Business",
-    body: "We learn about your business, your goals, your customers, and what you want the website to do.",
+    body: "We learn what you do, who you serve, and what your current website isn't doing well.",
     detail:
       "A short conversation, not a questionnaire marathon. What you sell, who buys it, what you want more of, and what your current site gets wrong.",
   },
   {
+    title: "See Your New Direction",
+    body: "We shape the design direction around your business before building the full site.",
+    detail:
+      "You see where the site is going — the look, the structure, the way your work is shown — before the full build begins.",
+  },
+  {
     title: "We Build",
-    body: "Better Built designs and develops the website around your business.",
+    body: "Your website is designed and developed around that direction.",
     detail:
       "Design and build happen together. You get a real, working site to look at — not a flat picture of one.",
   },
   {
     title: "Review",
-    body: "You review the website and tell us what you want changed.",
+    body: "You review the working website and request changes.",
     detail:
       "Walk through it on your own phone and laptop. Send notes in plain language. We make the changes.",
   },
   {
     title: "Launch",
-    body: "The website goes live and is ready for customers.",
+    body: "We connect your domain and take it live.",
     detail:
       "Domain, hosting, and deployment are handled. We check it across devices after it's live, not before.",
   },
@@ -128,7 +134,7 @@ export const faqs: Faq[] = [
   {
     question: "How long does it take?",
     answer:
-      "Most business websites take two to three weeks from the first conversation to launch. The part that usually sets the pace is how quickly we get your content — photos, services, and anything you want said a particular way.",
+      "Most business websites are ready to launch within 2–3 weeks of the first conversation. The part that usually sets the pace is how quickly we get your content — photos, services, and anything you want said a particular way.",
   },
   {
     question: "Do I have to sign up for the monthly plan?",

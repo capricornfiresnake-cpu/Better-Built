@@ -52,13 +52,14 @@ export default function Hero() {
             delay={120}
             className="display-mega text-chalk lg:col-span-7"
             lines={["Better", "Websites.", "Better", "Business."]}
+            label="Better Websites. Better Business."
           />
 
           <div className="lg:col-span-5 lg:pb-3">
             <Reveal delay={520}>
               <p className="lede max-w-[40ch]">
-                We design and build modern websites for businesses that want to look
-                credible, load fast, and be easy to hire.
+                We replace outdated websites with modern, high-performance sites built
+                to make your business look as good online as it does in person.
               </p>
             </Reveal>
 
@@ -70,7 +71,7 @@ export default function Hero() {
                   withArrow
                   className="label-mono w-full sm:w-auto"
                 >
-                  Start a project
+                  Get a Better Website
                 </ButtonLink>
                 <ButtonLink
                   href="/work"
@@ -79,7 +80,7 @@ export default function Hero() {
                   withArrow
                   className="label-mono w-full sm:w-auto"
                 >
-                  View our work
+                  See Our Work
                 </ButtonLink>
               </div>
             </Reveal>

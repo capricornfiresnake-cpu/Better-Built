@@ -20,6 +20,12 @@ export default function AnimatedText({
   delay = 0,
   /** Runs on mount instead of on scroll — for content above the fold. */
   immediate = false,
+  /**
+   * The heading as one clean sentence. The lines are split for composition, so
+   * without this the accessible name runs them together with no space after a
+   * line's full stop. Set it whenever the split would misread.
+   */
+  label,
 }: {
   lines: ReactNode[];
   as?: ElementType;
@@ -28,6 +34,7 @@ export default function AnimatedText({
   stagger?: number;
   delay?: number;
   immediate?: boolean;
+  label?: string;
 }) {
   const { ref, inView } = useInView<HTMLElement>({ threshold: 0.2 });
   const [mounted, setMounted] = useState(false);
@@ -42,10 +49,16 @@ export default function AnimatedText({
   const visible = immediate ? mounted : inView;
 
   return (
-    <Tag ref={ref} data-visible={visible ? "true" : "false"} className={className}>
+    <Tag
+      ref={ref}
+      data-visible={visible ? "true" : "false"}
+      className={className}
+      aria-label={label}
+    >
       {lines.map((line, i) => (
         <span
           key={i}
+          aria-hidden={label ? "true" : undefined}
           className={cn("line-mask", lineClassName)}
           style={{ "--line-delay": `${delay + i * stagger}ms` } as React.CSSProperties}
         >

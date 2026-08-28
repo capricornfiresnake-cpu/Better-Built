@@ -97,7 +97,7 @@ export default function HeroShowcase({ projects }: { projects: Project[] }) {
             className="block rounded-xl focus-visible:outline-offset-4"
           >
             <BrowserFrame
-              label={launched ? current.domain : "localhost:3000"}
+              label={current.domain}
               status={launched && current.liveUrl ? "Live" : launched ? undefined : "Building"}
               progress={load}
             >

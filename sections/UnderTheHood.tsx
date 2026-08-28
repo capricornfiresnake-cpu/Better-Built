@@ -106,13 +106,13 @@ export default function UnderTheHood({
           <Reveal>
             <Eyebrow>Under the hood</Eyebrow>
             <h2 className="display-xl mt-7 max-w-[13ch] text-chalk">
-              What the site is made of.
+              Built differently.
             </h2>
           </Reveal>
           <Reveal delay={100}>
             <p className="max-w-[38ch] text-[1.0625rem] leading-relaxed text-slate">
-              All of it is true of this page. Open dev tools and check — that is
-              rather the point of putting it here.
+              No templates. No page builders. No unnecessary bloat. The technical
+              details are below, for anyone who wants them.
             </p>
           </Reveal>
         </div>
