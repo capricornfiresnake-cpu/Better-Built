@@ -49,7 +49,7 @@ export type PricingPlan = {
 export const websitePlan: PricingPlan = {
   id: "website",
   name: "Website",
-  price: "$800",
+  price: "$1250",
   cadence: "one-time",
   description:
     "A complete, custom website for your business — designed, built, and launched.",
@@ -64,7 +64,7 @@ export const websitePlan: PricingPlan = {
     "Hosting setup assistance",
   ],
   cta: { label: "Build My Website", href: "/contact" },
-  checkoutUrl: "https://buy.stripe.com/28E5kE0ifexaaSXe0a0co02",
+  checkoutUrl: "https://buy.stripe.com/00waEYe954WA0ej2hs0co03",
   checkoutLabel: "Start my website",
   checkoutVia: "brief",
   emphasis: "primary",
@@ -120,7 +120,7 @@ export const industryOptions = [
  * With no Payment Link filled in, this is exactly the old behaviour: the
  * contact form, with the original wording. Once a link is present the button
  * says plainly that it takes money — a button reading "Build My Website" that
- * silently opens a card form for $800 would be a trap.
+ * silently opens a card form for $1250 would be a trap.
  */
 export function planAction(plan: PricingPlan): {
   href: string;

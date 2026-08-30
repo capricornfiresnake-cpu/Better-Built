@@ -61,10 +61,10 @@ export function organizationSchema() {
     makesOffer: {
       "@type": "Offer",
       name: "Custom business website",
-      price: "800",
+      price: "1250",
       priceCurrency: "USD",
       description:
-        "A custom-designed, mobile-responsive business website, built and launched for a one-time price of $800.",
+        "A custom-designed, mobile-responsive business website, built and launched for a one-time price of $1250.",
     },
   };
 }

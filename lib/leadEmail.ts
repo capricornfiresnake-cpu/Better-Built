@@ -78,7 +78,7 @@ function textBody(lead: Lead): string {
   lines.push("");
   if (lead.reference) {
     lines.push(
-      "This person was shown the $800 checkout after sending this.",
+      "This person was shown the $1250 checkout after sending this.",
       `Stripe reference: ${lead.reference}`,
       "Check the Stripe dashboard to see whether the payment went through.",
     );
@@ -104,7 +104,7 @@ function htmlBody(lead: Lead): string {
 
   const banner = lead.reference
     ? `<p style="margin:0 0 8px;padding:10px 14px;background:#111;color:#fff;font-weight:600">
-         Shown the $800 checkout · ref ${escapeHtml(lead.reference)}
+         Shown the $1250 checkout · ref ${escapeHtml(lead.reference)}
        </p>
        <p style="margin:0 0 20px;color:#666;font-size:13px">
          Check the Stripe dashboard to see whether the payment went through.

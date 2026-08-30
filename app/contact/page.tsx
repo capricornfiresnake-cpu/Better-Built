@@ -10,7 +10,7 @@ import { site } from "@/lib/site";
 export const metadata = pageMeta({
   title: "Start Your Project",
   description:
-    "Tell Better Built about your business and we'll come back with a plan and a timeline. Websites from $800, one time.",
+    "Tell Better Built about your business and we'll come back with a plan and a timeline. Websites from $1250, one time.",
   path: "/contact",
 });
 

@@ -50,7 +50,7 @@ function Field({
  * Lead form. Posts JSON to `/api/lead`, which is the single place to wire up a
  * CRM, email automation, or SMS follow-up — no component changes needed.
  *
- * The form is the front door to the $800 build. Answers are delivered first,
+ * The form is the front door to the $1250 build. Answers are delivered first,
  * then the browser goes straight to Stripe — there is no thank-you screen in
  * between, because the Stripe page is the confirmation. Whether the payment
  * actually happened is a question for the Stripe dashboard, which is what the

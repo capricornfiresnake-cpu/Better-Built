@@ -8,13 +8,13 @@ import { pageMeta } from "@/lib/seo";
 export const metadata = pageMeta({
   title: "Pricing",
   description:
-    "A complete custom business website for $800, one time. Optional ongoing updates at $125/month.",
+    "A complete custom business website for $1250, one time. Optional ongoing updates at $125/month.",
   path: "/pricing",
 });
 
 const comparisons = [
   {
-    title: "What $800 covers",
+    title: "What $1250 covers",
     body: "Design, build, and launch of a complete business website. One payment, made once, before the site goes live.",
   },
   {
@@ -35,7 +35,7 @@ export default function PricingPage() {
         lines={["Premium work.", "Plain pricing."]}
         lede="You'll know the full cost before we start, and it won't move once we do."
         meta={[
-          { label: "Website", value: "$800 one-time" },
+          { label: "Website", value: "$1250 one-time" },
           { label: "Updates", value: "$125/mo" },
         ]}
       />

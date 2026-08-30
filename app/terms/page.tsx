@@ -53,7 +53,7 @@ export default function TermsPage() {
             <h2>Pricing and payment</h2>
             <p>
               Prices listed on this website describe our standard offering. The
-              $800 website is paid before work begins, and support plans are billed
+              $1250 website is paid before work begins, and support plans are billed
               on a recurring basis until you cancel. Card payments are handled by
               Stripe — we never see or store your card details.
             </p>
@@ -71,7 +71,7 @@ export default function TermsPage() {
             </p>
             <ul>
               <li>
-                <strong>The $800 website.</strong> Full refund at any point before
+                <strong>The $1250 website.</strong> Full refund at any point before
                 we send you the first design. After that and before the site goes
                 live, half the fee is refundable — the other half covers design
                 work already done. Once the site is live it is yours to keep, and

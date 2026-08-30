@@ -77,7 +77,7 @@ export default function OpengraphImage() {
             style={{ width: 110, height: 3, backgroundColor: "#6c63ff", marginTop: 40 }}
           />
           <div style={{ fontSize: 26, color: "#9a9ca3", marginTop: 26 }}>
-            Modern websites for businesses. From $800.
+            Modern websites for businesses. From $1250.
           </div>
         </div>
       </div>

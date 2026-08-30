@@ -19,7 +19,7 @@ const delivery = ["Designed", "Built", "Launched"];
  */
 function OwnershipFlow() {
   const stages = [
-    { label: "Build", note: "$800 once" },
+    { label: "Build", note: "$1250 once" },
     { label: "Launch", note: "It's yours" },
     { label: "Support", note: "Optional" },
   ];

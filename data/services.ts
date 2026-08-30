@@ -127,7 +127,7 @@ export type Faq = { question: string; answer: string };
 
 export const faqs: Faq[] = [
   {
-    question: "Is $800 really the whole price?",
+    question: "Is $1250 really the whole price?",
     answer:
       "Yes — one payment for the design, the build, and the launch of your website. Ongoing support is separate and entirely optional. If a project needs something well outside a standard business website, we tell you before we start, not after.",
   },
