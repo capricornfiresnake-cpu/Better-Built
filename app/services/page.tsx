@@ -1,7 +1,7 @@
 import PageHeader from "@/components/layout/PageHeader";
 import ServiceTransformation from "@/components/services/ServiceTransformation";
 import Reveal from "@/components/ui/Reveal";
-import { Container, Section } from "@/components/ui/Section";
+import { Container, Eyebrow, Section } from "@/components/ui/Section";
 import { services } from "@/data/services";
 import { pageMeta } from "@/lib/seo";
 import { cn } from "@/lib/utils";
@@ -86,6 +86,57 @@ export default function ServicesPage() {
                 </article>
               );
             })}
+          </div>
+        </Container>
+      </Section>
+
+      <Section surface="void" rule>
+        <Container>
+          <div className="grid gap-x-14 gap-y-10 lg:grid-cols-12">
+            <Reveal className="lg:col-span-5">
+              <Eyebrow>Imagery</Eyebrow>
+              <h2 className="display-xl mt-7 max-w-[14ch] text-chalk">
+                No photos? We&rsquo;ll work with what you have.
+              </h2>
+            </Reveal>
+
+            <div className="lg:col-span-7">
+              <Reveal delay={100}>
+                <p className="max-w-[52ch] text-[1.125rem] leading-relaxed text-chalk">
+                  Great imagery makes a site. If you don&rsquo;t have professional photos,
+                  we make the most of what you&rsquo;ve got.
+                </p>
+              </Reveal>
+
+              <Reveal delay={160}>
+                <ul className="mt-8 border-t border-line-soft">
+                  {[
+                    "Editing and cleanup of the photos you already have",
+                    "Licensed photography chosen to fit your business",
+                    "Custom graphics and backgrounds",
+                    "A short list of the shots worth taking on your phone",
+                  ].map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-center gap-3 border-b border-line-soft py-3.5 text-[0.9375rem] text-slate"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="block h-px w-3 shrink-0 bg-accent"
+                      />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+
+              <Reveal delay={220}>
+                <p className="mt-7 max-w-[52ch] text-[0.9375rem] leading-relaxed text-dim">
+                  Your products, your work, and your results are always shown as they
+                  really are.
+                </p>
+              </Reveal>
+            </div>
           </div>
         </Container>
       </Section>
